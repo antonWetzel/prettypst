@@ -1,0 +1,14 @@
+[package]
+name = "prettypst"
+version = "1.0.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0.184", features = ["derive"] }
+ecow = { version = "0.2", features = ["serde"] }
+typst-syntax = { git = "https://github.com/typst/typst.git", tag = "v0.9.0" }
+clap = { version = "4.4", features = ["derive", "env"] }
+toml = { version = "0.8", default-features = false, features = ["parse", "display"] }
+thiserror = "1.0.50"
