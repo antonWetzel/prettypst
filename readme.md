@@ -39,7 +39,8 @@
 					"typst",
 				],
 			}
-		],```
+		],
+   		```
 - change command to use wanted style or configuration
 	- `--style=otbs`
 	- `--use-configuration`
@@ -48,7 +49,7 @@
 
 - create configuration with `prettypst [--style=otbs] --save-configuration`
 
-```toml
+```gdscript
 indentation = 0 | 1 | ... # use 0 for tabs
 seperate_label = false | true # insert space before a label
 final_newline = false | true # insert a final newline at the end
