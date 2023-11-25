@@ -9,7 +9,7 @@ pub enum Styles {
     /// Laurmaedje's style
     Default,
     /// One true bracket style
-    OTBS,
+    Otbs,
 }
 
 impl Styles {
@@ -46,7 +46,7 @@ impl Styles {
                     blank_lines_after: 0,
                 },
             },
-            Self::OTBS => Settings {
+            Self::Otbs => Settings {
                 indentation: 0,
                 seperate_label: true,
                 preserve_newline: PreserveNewLine {
@@ -85,7 +85,7 @@ impl Display for Styles {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Default => write!(f, "default"),
-            Self::OTBS => write!(f, "otbs"),
+            Self::Otbs => write!(f, "otbs"),
         }
     }
 }

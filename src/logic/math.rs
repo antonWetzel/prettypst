@@ -8,7 +8,8 @@ pub fn format_equation(
 ) {
     let spaces = node
         .children()
-        .fold(0, |spaces, child| spaces + (child.kind() == SyntaxKind::Space) as u32);
+        .filter(|child| child.kind() == SyntaxKind::Space)
+        .count();
     if spaces < 2 || !equation_has_aligment(node) {
         format_inline_equation(node, state, settings, output, spaces == 2);
     } else {
@@ -71,29 +72,34 @@ fn format_multi_line_math(
         }
         return;
     }
-    let mut lengths = Vec::new();
-    lengths.push(Vec::new());
-    let mut calculator = PositionCalculator::new();
-    let mut calc = Output::new(&mut calculator);
-    for child in node.children() {
-        match child.kind() {
-            SyntaxKind::MathAlignPoint => {
-                lengths.last_mut().unwrap().push(calc.position().1);
-                calc.reset();
-            }
-            SyntaxKind::Linebreak => {
-                lengths.last_mut().unwrap().push(calc.position().1);
-                calc.reset();
-                lengths.push(Vec::new());
-            }
-            _ => {
-                format(child, state, settings, &mut calc);
+
+    let lengths = {
+        let mut lengths = Vec::new();
+        let mut line = Vec::new();
+        let mut calculator = PositionCalculator::new();
+        let mut calc = Output::new(&mut calculator);
+        for child in node.children() {
+            match child.kind() {
+                SyntaxKind::MathAlignPoint => {
+                    line.push(calc.position().1);
+                    calc.reset();
+                }
+                SyntaxKind::Linebreak => {
+                    line.push(calc.position().1);
+                    calc.reset();
+                    lengths.push(std::mem::take(&mut line));
+                }
+                _ => {
+                    format(child, state, settings, &mut calc);
+                }
             }
         }
-    }
-    if calc.position().1 != 0 {
-        lengths.last_mut().unwrap().push(calc.position().1);
-    }
+        if calc.position().1 != 0 {
+            line.push(calc.position().1);
+        }
+        lengths.push(line);
+        lengths
+    };
 
     let columns_amount = lengths.iter().map(|v| v.len()).max().unwrap_or(1);
     let mut columns = vec![0; columns_amount];
@@ -121,9 +127,8 @@ fn format_multi_line_math(
             SyntaxKind::Linebreak => {
                 output.set_whitespace(Whitespace::None, Priority::Normal);
                 output.emit_whitespace(&state, settings);
-                let amount = 1
-                    + columns[index..].iter().sum::<usize>()
-                    + (columns_amount - index - 1) * 3;
+                let amount =
+                    1 + columns[index..].iter().sum::<usize>() + (columns_amount - index - 1) * 3;
                 let diff = amount - lengths[line][index];
                 output.set_whitespace(Whitespace::Spaces(diff), Priority::High);
                 format(child, state, settings, output);

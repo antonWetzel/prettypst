@@ -114,8 +114,8 @@ create_normal_and_partial!(
 
 impl Settings {
     pub fn merge(&mut self, path: &PathBuf) -> Result<(), FormatError> {
-        let data = std::fs::read_to_string(path)
-            .map_err(|_| FormatError::FailedToReadConfigurationFile)?;
+        let data =
+            std::fs::read_to_string(path).map_err(FormatError::FailedToReadConfigurationFile)?;
         let partial = toml::from_str(&data)?;
         <Self as Merge>::merge(self, partial);
         Ok(())

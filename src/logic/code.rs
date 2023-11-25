@@ -1,14 +1,16 @@
 use super::*;
 
+use std::ops::Not;
+
 pub fn format_code_block(
     node: &SyntaxNode,
     mut state: State,
     settings: &Settings,
     output: &mut Output<impl OutputTarget>,
 ) {
-    let single = !node
+    let single = node
         .children()
-        .any(|value| value.kind() == SyntaxKind::Space && value.text().contains('\n'));
+        .all(|value| value.kind() != SyntaxKind::Space || value.text().contains('\n').not());
     state.mode = Mode::Code;
     for child in node.children() {
         match child.kind() {
@@ -311,8 +313,9 @@ fn get_column_count(node: &SyntaxNode) -> usize {
                     }
                 }
                 (State::IsColumns, SyntaxKind::Array) => {
-                    let count =
-                        sub_child.children().fold(0, |count, value| match value.kind() {
+                    let count = sub_child
+                        .children()
+                        .fold(0, |count, value| match value.kind() {
                             SyntaxKind::Auto
                             | SyntaxKind::Int // would be compile error, but would be strange to skip for formatting
                             | SyntaxKind::Numeric

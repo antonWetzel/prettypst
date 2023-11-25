@@ -1,23 +1,22 @@
 mod logic;
 mod output;
-pub mod settings;
+mod settings;
 mod state;
-pub mod styles;
+mod styles;
 
-use ecow::EcoString;
 use state::State;
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
 use output::Output;
 
-pub use output::OutputTarget;
+use output::OutputTarget;
 use std::{
     fs::{self, File},
-    io::{BufWriter, Read, Write},
+    io::{BufWriter, Read},
     path::PathBuf,
 };
 
-pub use styles::Styles;
+use styles::Styles;
 
 use clap::Parser;
 
@@ -60,38 +59,40 @@ pub struct Command {
 
 #[derive(thiserror::Error, Debug)]
 pub enum FormatError {
-    #[error("Failed to get project Folder")]
+    #[error("Failed to get project folder")]
     FailedToGetProjectFolder,
+    #[error("Failed to get working directory")]
+    FailedToGetWorkingDirectory(std::io::Error),
     #[error("No configuration file")]
     NoConfigurationFile,
     #[error("Failed to read configuration file")]
-    FailedToReadConfigurationFile,
+    FailedToReadConfigurationFile(std::io::Error),
     #[error("malformed configuration file: {0}")]
     MalformatedConfigurationFile(#[from] toml::de::Error),
     #[error("failed to serialize configuration: {0}")]
     FailedToSerializeConfiguration(#[from] toml::ser::Error),
     #[error("failed to save configuration file")]
-    FailedToSaveConfigurationFile,
+    FailedToSaveConfigurationFile(std::io::Error),
 
     #[error("failed to read from stdin")]
-    FailedToReadStdIn,
+    FailedToReadStdIn(std::io::Error),
     #[error("no input file or stdin specified")]
     NoInputFileOrStdInSpecified,
     #[error("input file and stdin specified")]
     InputFileAndStdInSpecified,
     #[error("failed to read input file")]
-    FailedToReadInputFile,
+    FailedToReadInputFile(std::io::Error),
 
     #[error("output file and stdout specified")]
     OutputFileAndStdOutSpecified,
     #[error("failed to create output file")]
-    FailedToCreateOutputFile,
+    FailedToCreateOutputFile(std::io::Error),
     #[error("failed to create temporary file")]
-    FailedToCreateTemporaryFile,
+    FailedToCreateTemporaryFile(std::io::Error),
     #[error("failed to get temporary file path")]
-    FailedToGetTemporaryFilePath,
+    FailedToGetTemporaryFilePath(std::io::Error),
     #[error("failed to replace input file")]
-    FailedToReplaceInputFile,
+    FailedToReplaceInputFile(std::io::Error),
 }
 
 pub fn format_node(
@@ -105,7 +106,7 @@ pub fn format_node(
 
     // ensure end of file is always present
     logic::format(
-        &SyntaxNode::leaf(SyntaxKind::Eof, EcoString::new()),
+        &SyntaxNode::leaf(SyntaxKind::Eof, ""),
         state,
         settings,
         &mut output,
@@ -137,7 +138,9 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
                 }
             }
             (_, Some(path)) => path.to_owned(),
-            _ => std::env::current_dir().unwrap().to_owned(),
+            _ => std::env::current_dir()
+                .map_err(FormatError::FailedToGetWorkingDirectory)?
+                .to_owned(),
         };
         let mut path = path.as_path();
         let file = loop {
@@ -153,7 +156,7 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
 
     if command.save_configuration {
         std::fs::write(CONFIG_NAME, toml::to_string_pretty(&settings)?)
-            .map_err(|_| FormatError::FailedToSaveConfigurationFile)?;
+            .map_err(FormatError::FailedToSaveConfigurationFile)?;
         return Ok(());
     }
 
@@ -161,14 +164,14 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
         (Some(_), true) => return Err(FormatError::InputFileAndStdInSpecified),
         (Some(path), false) => {
             let input_data =
-                std::fs::read_to_string(path).map_err(|_| FormatError::FailedToReadInputFile)?;
+                std::fs::read_to_string(path).map_err(FormatError::FailedToReadInputFile)?;
             (input_data, path.display().to_string())
         }
         (None, true) => {
             let mut data = String::new();
             std::io::stdin()
                 .read_to_string(&mut data)
-                .map_err(|_| FormatError::FailedToReadStdIn)?;
+                .map_err(FormatError::FailedToReadStdIn)?;
             (data, "stdin".into())
         }
         (None, false) => return Err(FormatError::NoInputFileOrStdInSpecified),
@@ -179,37 +182,26 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
     match (&command.output, command.use_std_out) {
         (Some(_), true) => return Err(FormatError::OutputFileAndStdOutSpecified),
         (Some(out), false) => {
-            let file = File::create(out).map_err(|_| FormatError::FailedToCreateOutputFile)?;
-            let mut target = FileTarget(BufWriter::new(file));
+            let file = File::create(out).map_err(FormatError::FailedToCreateOutputFile)?;
+            let mut target = BufWriter::new(file);
             format_node(&root, &settings, &mut target)?;
             drop(target);
         }
         (None, true) => {
-            let mut target = FileTarget(BufWriter::new(std::io::stdout()));
+            let mut target = BufWriter::new(std::io::stdout());
             format_node(&root, &settings, &mut target)?;
             drop(target);
         }
         (None, false) => {
-            let temp_path = input_name.clone() + ".tmp";
+            let temp_path = format!("{}.tmp", input_name);
             let file =
-                File::create(&temp_path).map_err(|_| FormatError::FailedToCreateTemporaryFile)?;
-            let mut target = FileTarget(BufWriter::new(file));
+                File::create(&temp_path).map_err(FormatError::FailedToCreateTemporaryFile)?;
+            let mut target = BufWriter::new(file);
             format_node(&root, &settings, &mut target)?;
             drop(target);
 
-            fs::rename(temp_path, input_name).map_err(|err| {
-                println!("{}", err);
-                FormatError::FailedToReplaceInputFile
-            })?;
+            fs::rename(temp_path, input_name).map_err(FormatError::FailedToReplaceInputFile)?;
         }
     };
     Ok(())
-}
-
-pub struct FileTarget<T: std::io::Write>(BufWriter<T>);
-
-impl<T: std::io::Write> OutputTarget for FileTarget<T> {
-    fn emit(&mut self, data: &EcoString, _settings: &settings::Settings) {
-        self.0.write_all(data.as_bytes()).unwrap();
-    }
 }

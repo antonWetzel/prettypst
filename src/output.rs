@@ -1,4 +1,3 @@
-use ecow::EcoString;
 use typst_syntax::SyntaxNode;
 
 use crate::state::State;
@@ -24,7 +23,13 @@ pub enum Priority {
 }
 
 pub trait OutputTarget {
-    fn emit(&mut self, data: &EcoString, settings: &Settings);
+    fn emit(&mut self, data: &str, settings: &Settings);
+}
+
+impl<T: std::io::Write> OutputTarget for T {
+    fn emit(&mut self, data: &str, _settings: &Settings) {
+        self.write_all(data.as_bytes()).unwrap();
+    }
 }
 
 pub struct Output<'a, Target: OutputTarget> {
@@ -47,52 +52,38 @@ impl<'a, Target: OutputTarget> Output<'a, Target> {
             return;
         }
         match settings.indentation {
-            0 => {
-                let mut data =
-                    EcoString::with_capacity(state.indentation + state.extra_indentation);
-                for _ in 0..state.indentation {
-                    data.push('\t');
-                }
-                for _ in 0..state.extra_indentation {
-                    data.push(' ');
-                }
-                self.target.emit(&data, settings);
-            }
-            amount => {
-                let length = state.indentation * amount;
-                let mut data = EcoString::with_capacity(length + state.extra_indentation);
-                for _ in 0..length {
-                    data.push(' ');
-                }
-                for _ in 0..state.extra_indentation {
-                    data.push(' ');
-                }
-                self.target.emit(&data, settings);
-            }
+            0 => self.target.emit(
+                &format!(
+                    "{0:\t<1$}{0: <2$}",
+                    "", state.indentation, state.extra_indentation
+                ),
+                settings,
+            ),
+            amount => self.target.emit(
+                &format!(
+                    "{0: <1$}",
+                    "",
+                    state.indentation * amount + state.extra_indentation
+                ),
+                settings,
+            ),
         }
     }
 
     pub fn emit_whitespace(&mut self, state: &State, settings: &Settings) {
         match self.whitespace {
             Whitespace::None => {}
-            Whitespace::Space => self.target.emit(&EcoString::inline(" "), settings),
+            Whitespace::Space => self.target.emit(" ", settings),
             Whitespace::Spaces(amount) => {
-                let mut data = EcoString::with_capacity(amount);
-                for _ in 0..amount {
-                    data.push(' ');
-                }
-                self.target.emit(&data, settings);
+                self.target.emit(&format!("{0: <1$}", "", amount), settings);
             }
             Whitespace::LineBreak => {
-                self.target.emit(&EcoString::inline("\n"), settings);
+                self.target.emit("\n", settings);
                 self.emit_indentation(state, settings)
             }
             Whitespace::LineBreaks(amount) => {
-                let mut data = EcoString::with_capacity(amount);
-                for _ in 0..amount {
-                    data.push('\n');
-                }
-                self.target.emit(&data, settings);
+                self.target
+                    .emit(&format!("{0:\n<1$}", "", amount), settings);
                 self.emit_indentation(state, settings)
             }
         }
@@ -116,8 +107,7 @@ impl<'a, Target: OutputTarget> Output<'a, Target> {
                 (Whitespace::Space, Whitespace::Spaces(_)) => {}
                 (Whitespace::Space, Whitespace::LineBreak) => {}
                 (Whitespace::Space, Whitespace::LineBreaks(_)) => {}
-                (Whitespace::Spaces(before), Whitespace::Spaces(after))
-                    if after > before => {}
+                (Whitespace::Spaces(before), Whitespace::Spaces(after)) if after > before => {}
                 (Whitespace::Spaces(_), Whitespace::LineBreak) => {}
                 (Whitespace::Spaces(_), Whitespace::LineBreaks(_)) => {}
                 (Whitespace::LineBreak, Whitespace::LineBreaks(_)) => {}
@@ -166,7 +156,7 @@ impl PositionCalculator {
 }
 
 impl OutputTarget for PositionCalculator {
-    fn emit(&mut self, data: &EcoString, settings: &Settings) {
+    fn emit(&mut self, data: &str, settings: &Settings) {
         for symbol in data.chars() {
             match symbol {
                 '\t' => {

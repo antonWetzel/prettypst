@@ -177,7 +177,6 @@ name = "prettypst"
 version = "1.0.0"
 dependencies = [
  "clap",
- "ecow",
  "serde",
  "thiserror",
  "toml",
