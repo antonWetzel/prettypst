@@ -22,17 +22,21 @@ impl Styles {
                     content: true,
                     math: true,
                 },
-                term: ColonSettings {
-                    space_before_colon: false,
-                    space_after_colon: true,
+                term: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
                 },
-                named_argument: ColonSettings {
-                    space_before_colon: false,
-                    space_after_colon: true,
+                named_argument: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
                 },
-                dictionary_entry: ColonSettings {
-                    space_before_colon: false,
-                    space_after_colon: true,
+                dictionary_entry: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
+                },
+                comma: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
                 },
                 columns: ColumnsSettings {
                     comma: AlignComma::EndOfContent,
@@ -53,17 +57,21 @@ impl Styles {
                     content: false,
                     math: true,
                 },
-                term: ColonSettings {
-                    space_before_colon: false,
-                    space_after_colon: true,
+                term: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
                 },
-                named_argument: ColonSettings {
-                    space_before_colon: false,
-                    space_after_colon: true,
+                named_argument: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
                 },
-                dictionary_entry: ColonSettings {
-                    space_before_colon: false,
-                    space_after_colon: true,
+                dictionary_entry: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
+                },
+                comma: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
                 },
                 columns: ColumnsSettings {
                     comma: AlignComma::EndOfContent,

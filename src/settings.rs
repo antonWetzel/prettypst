@@ -88,9 +88,9 @@ create_normal_and_partial!(
         pub comma: AlignComma,
     }
 
-    struct ColonSettings | PartialColonSettings {
-        pub space_before_colon: bool,
-        pub space_after_colon: bool,
+    struct PaddingSettings | PartialPaddingSettings {
+        pub space_before: bool,
+        pub space_after: bool,
     }
 
     struct PreserveNewLine | PartialPreserveNewLine {
@@ -104,9 +104,10 @@ create_normal_and_partial!(
         pub final_newline: bool,
         pub preserve_newline: PreserveNewLine,
         pub block: BlockSettings,
-        pub term: ColonSettings,
-        pub named_argument: ColonSettings,
-        pub dictionary_entry: ColonSettings,
+        pub term: PaddingSettings,
+        pub named_argument: PaddingSettings,
+        pub dictionary_entry: PaddingSettings,
+        pub comma: PaddingSettings,
         pub columns: ColumnsSettings,
         pub heading: HeadingSettings,
     }

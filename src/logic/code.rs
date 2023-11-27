@@ -94,13 +94,13 @@ pub fn format_named_argument(
     for child in node.children() {
         match child.kind() {
             SyntaxKind::Colon => {
-                if settings.named_argument.space_before_colon {
+                if settings.named_argument.space_before {
                     output.set_whitespace(Whitespace::Space, Priority::High);
                 } else {
                     output.set_whitespace(Whitespace::None, Priority::High);
                 }
                 format(child, state, settings, output);
-                if settings.named_argument.space_after_colon {
+                if settings.named_argument.space_after {
                     output.set_whitespace(Whitespace::Space, Priority::High);
                 } else {
                     output.set_whitespace(Whitespace::None, Priority::High);
@@ -120,13 +120,13 @@ pub fn format_keyed(
     for child in node.children() {
         match child.kind() {
             SyntaxKind::Colon => {
-                if settings.dictionary_entry.space_before_colon {
+                if settings.dictionary_entry.space_before {
                     output.set_whitespace(Whitespace::Space, Priority::High);
                 } else {
                     output.set_whitespace(Whitespace::None, Priority::High);
                 }
                 format(child, state, settings, output);
-                if settings.dictionary_entry.space_after_colon {
+                if settings.dictionary_entry.space_after {
                     output.set_whitespace(Whitespace::Space, Priority::High);
                 } else {
                     output.set_whitespace(Whitespace::None, Priority::High);
@@ -177,10 +177,20 @@ pub fn format_items(
                 }
             }
             SyntaxKind::Comma => {
-                format(child, state, settings, output);
                 if single {
-                    output.set_whitespace(Whitespace::Space, Priority::Low);
+                    if settings.comma.space_before {
+                        output.set_whitespace(Whitespace::Space, Priority::High);
+                    } else {
+                        output.set_whitespace(Whitespace::None, Priority::High);
+                    }
+                    format(child, state, settings, output);
+                    if settings.comma.space_after {
+                        output.set_whitespace(Whitespace::Space, Priority::High);
+                    } else {
+                        output.set_whitespace(Whitespace::None, Priority::High);
+                    }
                 } else {
+                    format(child, state, settings, output);
                     output.set_whitespace(Whitespace::LineBreak, Priority::High);
                 }
             }
