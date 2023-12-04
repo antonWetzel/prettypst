@@ -27,6 +27,7 @@
 	prettypst --style=[default | otbs] ...      | Change the used style
 	prettypst --use-configuration ...           | Load a configuration from "prettypst.toml"
 	prettypst --file-location=<path> ...        | Change file location to search for configuration (use with --use-std-in)
+
 ## VSCodium or VSCode
 
 - install custom-local-formatters
@@ -44,6 +45,21 @@
 - change command to use wanted style or configuration
 	- `--style=otbs`
 	- `--use-configuration`
+		- `prettypst.toml` must be in the same folder as the formatted file or a parent folder
+
+## Helix
+
+- Add `prettypst` to your `languages.toml`
+- ```toml
+  [[language]]
+  name = "typst"
+  # ...
+  formatter = { command = "prettypst", args = ["--use-std-in", "--use-std-out"] } 
+  ```
+- change command to use wanted style or configuration
+	- `--style=otbs`
+	- `--use-configuration`
+		- `prettypst.toml` must be in the current working directory or a parent folder
 
 ## Settings
 
