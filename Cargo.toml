@@ -12,7 +12,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 serde = { version = "1.0.184", features = ["derive"] }
-typst-syntax = { git = "https://github.com/typst/typst.git", tag = "v0.9.0" }
+typst-syntax = { git = "https://github.com/typst/typst.git", tag = "v0.10.0" }
 clap = { version = "4.4", features = ["derive", "env"] }
 toml = { version = "0.8", default-features = false, features = ["parse", "display"] }
 thiserror = "1.0.50"

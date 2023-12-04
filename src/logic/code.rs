@@ -94,17 +94,7 @@ pub fn format_named_argument(
     for child in node.children() {
         match child.kind() {
             SyntaxKind::Colon => {
-                if settings.named_argument.space_before {
-                    output.set_whitespace(Whitespace::Space, Priority::High);
-                } else {
-                    output.set_whitespace(Whitespace::None, Priority::High);
-                }
-                format(child, state, settings, output);
-                if settings.named_argument.space_after {
-                    output.set_whitespace(Whitespace::Space, Priority::High);
-                } else {
-                    output.set_whitespace(Whitespace::None, Priority::High);
-                }
+                format_optional_padding(child, state, settings, output, &settings.named_argument)
             }
             _ => format(child, state, settings, output),
         }
@@ -120,17 +110,7 @@ pub fn format_keyed(
     for child in node.children() {
         match child.kind() {
             SyntaxKind::Colon => {
-                if settings.dictionary_entry.space_before {
-                    output.set_whitespace(Whitespace::Space, Priority::High);
-                } else {
-                    output.set_whitespace(Whitespace::None, Priority::High);
-                }
-                format(child, state, settings, output);
-                if settings.dictionary_entry.space_after {
-                    output.set_whitespace(Whitespace::Space, Priority::High);
-                } else {
-                    output.set_whitespace(Whitespace::None, Priority::High);
-                }
+                format_optional_padding(child, state, settings, output, &settings.dictionary_entry);
             }
             _ => format(child, state, settings, output),
         }
@@ -178,17 +158,7 @@ pub fn format_items(
             }
             SyntaxKind::Comma => {
                 if single {
-                    if settings.comma.space_before {
-                        output.set_whitespace(Whitespace::Space, Priority::High);
-                    } else {
-                        output.set_whitespace(Whitespace::None, Priority::High);
-                    }
-                    format(child, state, settings, output);
-                    if settings.comma.space_after {
-                        output.set_whitespace(Whitespace::Space, Priority::High);
-                    } else {
-                        output.set_whitespace(Whitespace::None, Priority::High);
-                    }
+                    format_optional_padding(child, state, settings, output, &settings.comma);
                 } else {
                     format(child, state, settings, output);
                     output.set_whitespace(Whitespace::LineBreak, Priority::High);
@@ -354,6 +324,26 @@ pub fn format_code_statement(
     output: &mut Output<impl OutputTarget>,
 ) {
     format_default(node, state, settings, output);
+    match state.mode {
+        Mode::Code => {}
+        _ => output.set_whitespace(Whitespace::LineBreak, Priority::Normal),
+    }
+}
+
+pub fn format_import(
+    node: &SyntaxNode,
+    state: State,
+    settings: &Settings,
+    output: &mut Output<impl OutputTarget>,
+) {
+    for child in node.children() {
+        match child.kind() {
+            SyntaxKind::Colon => {
+                format_optional_padding(child, state, settings, output, &settings.import_statement)
+            }
+            _ => format(child, state, settings, output),
+        }
+    }
     match state.mode {
         Mode::Code => {}
         _ => output.set_whitespace(Whitespace::LineBreak, Priority::Normal),

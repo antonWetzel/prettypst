@@ -146,7 +146,7 @@ pub fn format(
         SyntaxKind::Conditional => format_default(node, state, settings, output),
         SyntaxKind::WhileLoop => format_default(node, state, settings, output),
         SyntaxKind::ForLoop => format_default(node, state, settings, output),
-        SyntaxKind::ModuleImport => format_code_statement(node, state, settings, output),
+        SyntaxKind::ModuleImport => format_import(node, state, settings, output),
         SyntaxKind::ImportItems => format_default(node, state, settings, output),
         SyntaxKind::ModuleInclude => format_code_statement(node, state, settings, output),
         SyntaxKind::LoopBreak => format_default(node, state, settings, output),
@@ -317,5 +317,26 @@ pub fn format_underscore(
     match state.mode {
         Mode::Code => format_padded(node, state, settings, output),
         _ => format_default(node, state, settings, output),
+    }
+}
+
+pub fn format_optional_padding(
+    node: &SyntaxNode,
+    state: State,
+    settings: &Settings,
+    output: &mut Output<impl OutputTarget>,
+
+    padding: &PaddingSettings,
+) {
+    if padding.space_before {
+        output.set_whitespace(Whitespace::Space, Priority::High);
+    } else {
+        output.set_whitespace(Whitespace::None, Priority::High);
+    }
+    format(node, state, settings, output);
+    if padding.space_after {
+        output.set_whitespace(Whitespace::Space, Priority::High);
+    } else {
+        output.set_whitespace(Whitespace::None, Priority::High);
     }
 }

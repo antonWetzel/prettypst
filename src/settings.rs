@@ -107,6 +107,7 @@ create_normal_and_partial!(
         pub term: PaddingSettings,
         pub named_argument: PaddingSettings,
         pub dictionary_entry: PaddingSettings,
+        pub import_statement: PaddingSettings,
         pub comma: PaddingSettings,
         pub columns: ColumnsSettings,
         pub heading: HeadingSettings,

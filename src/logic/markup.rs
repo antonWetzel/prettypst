@@ -149,17 +149,7 @@ pub fn format_term(
     for child in node.children() {
         match child.kind() {
             SyntaxKind::Colon => {
-                if settings.term.space_before {
-                    output.set_whitespace(Whitespace::Space, Priority::Normal);
-                } else {
-                    output.set_whitespace(Whitespace::None, Priority::Normal);
-                }
-                format(child, state, settings, output);
-                if settings.term.space_after {
-                    output.set_whitespace(Whitespace::Space, Priority::Normal);
-                } else {
-                    output.set_whitespace(Whitespace::None, Priority::Normal);
-                }
+                format_optional_padding(child, state, settings, output, &settings.term);
             }
             _ => format(child, state, settings, output),
         }

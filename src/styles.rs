@@ -34,6 +34,10 @@ impl Styles {
                     space_before: false,
                     space_after: true,
                 },
+                import_statement: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
+                },
                 comma: PaddingSettings {
                     space_before: false,
                     space_after: true,
@@ -66,6 +70,10 @@ impl Styles {
                     space_after: true,
                 },
                 dictionary_entry: PaddingSettings {
+                    space_before: false,
+                    space_after: true,
+                },
+                import_statement: PaddingSettings {
                     space_before: false,
                     space_after: true,
                 },
