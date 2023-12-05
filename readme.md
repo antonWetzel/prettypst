@@ -10,7 +10,7 @@
 
 ## Install
 
-	cargo install --git https://github.com/antonWetzel/prettypst.git
+	cargo install --git=https://github.com/antonWetzel/prettypst.git --locked
 
 ## Usage
 
