@@ -12,10 +12,11 @@
 
 	cargo install --git=https://github.com/antonWetzel/prettypst.git --locked
 
-## Usage
+## Usage / Features
 
 - Prettypst might change your work, use only if you can recover a previous version.
 - Insert or remove trailing comma to change between single line and multiline
+- Any feature requests are welcome
 
 ### Terminal
 
@@ -28,7 +29,7 @@
 	prettypst --use-configuration ...           | Load a configuration from "prettypst.toml"
 	prettypst --file-location=<path> ...        | Change file location to search for configuration (use with --use-std-in)
 
-## VSCodium or VSCode
+### VSCodium or VSCode
 
 - install custom-local-formatters
 - use prettypst for typst
@@ -47,7 +48,7 @@
 	- `--use-configuration`
 		- `prettypst.toml` must be in the same folder as the formatted file or a parent folder
 
-## Helix
+### Helix
 
 - Add `prettypst` to your `languages.toml`
 - ```toml
