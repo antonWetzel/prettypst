@@ -55,7 +55,7 @@
   [[language]]
   name = "typst"
   # ...
-  formatter = { command = "prettypst", args = ["--use-std-in", "--use-std-out"] } 
+  formatter = { command = "prettypst", args = ["--use-std-in", "--use-std-out"] }
   ```
 - change command to use wanted style or configuration
 	- `--style=otbs`
@@ -68,32 +68,47 @@
 
 ```gdscript
 indentation = 0 | 1 | ... # use 0 for tabs
-seperate_label = false | true # insert space before a label
-final_newline = false | true # insert a final newline at the end
+seperate-label = false | true # insert space before a label
+final-newline = false | true # insert a final newline at the end
 
-[preserve_newline]
+[preserve-newline]
 content = false | true # preserve single newlines in markup
 math = false | true # preserve single newline in equations
 
 [block]
-long_block_style = "Seperate" | "Compact" # '[' and ']' on the same or seperate lines as the content
+long-block-style = "seperate" | "compact" # '[' and ']' on the same or seperate lines as the content
 
 [term]
-space_before_colon = false | true # insert a space before the ':' in terms
-space_after_colon = false | true # insert a space after the ':' in terms
+space-before = false | true # insert a space before the ':' in terms
+space-after = false | true # insert a space after the ':' in terms
 
-[named_argument]
-space_before_colon = false | true # insert a space before the ':' in named arguments
-space_after_colon = false | true # insert a space after the ':' in named arguments
+[named-argument]
+space-before = false | true # insert a space before the ':' in named arguments
+space-after = false | true # insert a space after the ':' in named arguments
 
-[dictionary_entry]
-space_before_colon = false | true # insert a space before the ':' in dictionary entries
-space_after_colon = false | true # insert a space after the ':' in dictionary entries
+[dictionary-entry]
+space-before = false | true # insert a space before the ':' in dictionary entries
+space-after = false | true # insert a space after the ':' in dictionary entries
+
+[import-statement]
+space-before = false | true # insert a space before the ':' in import statements
+space-after = false | true # insert a space after the ':' in import statements
+
+[comma]
+space-before = false | true # insert a space before the ',' in arguments
+space-after = false | true # insert a space after the ',' in arguments
+
 
 [columns]
-comma = "EndOfContent" | "EndOfCell" # how to align commas in tables
+comma = "end-of-content" | "end-of-cell" # how to align commas in tables
 
 [heading]
-blank_lines_before = 0 | 1 | ... # blank lines before a heading
-blank_lines_after = 0 | 1 | ... # blank lines after a heading
+blank-lines-before = 0 | 1 | ... # blank lines before a heading
+blank-lines-after = 0 | 1 | ... # blank lines after a heading
+
+[columns-commands]
+grid = "columns"     # format the "grid", "gridx", ... command with
+gridx = "columns"    # columns specified by the named argument "columns"
+table = "columns"
+tablex = "columns"
 ```

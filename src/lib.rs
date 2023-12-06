@@ -151,7 +151,7 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
             }
             path = path.parent().ok_or(FormatError::NoConfigurationFile)?;
         };
-        settings.merge(&file)?;
+        settings.overwrite(&file)?;
     }
 
     if command.save_configuration {

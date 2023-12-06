@@ -44,24 +44,26 @@ pub fn format_func_call(
     settings: &Settings,
     output: &mut Output<impl OutputTarget>,
 ) {
-    enum Kind {
+    #[derive(Debug)]
+    enum Kind<'a> {
         Normal,
-        Columns,
+        Columns(&'a str),
     }
     let mut kind = Kind::Normal;
     for child in node.children() {
         match child.kind() {
             SyntaxKind::Ident => {
-                kind = match child.text().as_str() {
-                    "table" => Kind::Columns,
-                    "grid" => Kind::Columns,
-                    _ => Kind::Normal,
+                kind = match settings.columns_methods.get(child.text().as_str()) {
+                    None => Kind::Normal,
+                    Some(column_argument) => Kind::Columns(column_argument),
                 };
                 format(child, state, settings, output);
             }
             SyntaxKind::Args => match kind {
                 Kind::Normal => format_items(child, state, settings, output),
-                Kind::Columns => format_column_args(child, state, settings, output),
+                Kind::Columns(column_argument) => {
+                    format_column_args(child, state, settings, output, column_argument)
+                }
             },
             _ => format(child, state, settings, output),
         }
@@ -183,8 +185,9 @@ pub fn format_column_args(
     mut state: State,
     settings: &Settings,
     output: &mut Output<impl OutputTarget>,
+    column_argument: &str,
 ) {
-    let columns_count = get_column_count(node);
+    let columns_count = get_column_count(node, column_argument);
     let mut lengths = Vec::new();
     for child in node.children() {
         match child.kind() {
@@ -272,7 +275,7 @@ pub fn format_column_args(
     }
 }
 
-fn get_column_count(node: &SyntaxNode) -> usize {
+fn get_column_count(node: &SyntaxNode, column_argument: &str) -> usize {
     for child in node.children() {
         if child.kind() != SyntaxKind::Named {
             continue;
@@ -286,7 +289,7 @@ fn get_column_count(node: &SyntaxNode) -> usize {
         let state = child.children().fold(State::Start, |state, sub_child| {
             match (&state, sub_child.kind()) {
                 (State::Start, SyntaxKind::Ident) => {
-                    if sub_child.text() == "columns" {
+                    if sub_child.text() == column_argument {
                         State::IsColumns
                     } else {
                         State::Start

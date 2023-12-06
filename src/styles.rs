@@ -53,6 +53,15 @@ impl Styles {
                     blank_lines_before: 1,
                     blank_lines_after: 0,
                 },
+
+                columns_methods: [
+                    (String::from("table"), String::from("columns")),
+                    (String::from("tablex"), String::from("columns")),
+                    (String::from("grid"), String::from("columns")),
+                    (String::from("gridx"), String::from("columns")),
+                ]
+                .into_iter()
+                .collect(),
             },
             Self::Otbs => Settings {
                 indentation: 0,
@@ -92,6 +101,15 @@ impl Styles {
                     blank_lines_before: 2,
                     blank_lines_after: 1,
                 },
+
+                columns_methods: [
+                    (String::from("table"), String::from("columns")),
+                    (String::from("tablex"), String::from("columns")),
+                    (String::from("grid"), String::from("columns")),
+                    (String::from("gridx"), String::from("columns")),
+                ]
+                .into_iter()
+                .collect(),
             },
         }
     }
