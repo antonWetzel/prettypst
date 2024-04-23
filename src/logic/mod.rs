@@ -40,7 +40,10 @@ pub fn format(
         SyntaxKind::SmartQuote => format_default(node, state, settings, output),
         SyntaxKind::Strong => format_default(node, state, settings, output),
         SyntaxKind::Emph => format_default(node, state, settings, output),
-        SyntaxKind::Raw => format_default(node, state, settings, output),
+        SyntaxKind::Raw => skip_formatting(node, state, settings, output),
+        SyntaxKind::RawLang => skip_formatting(node, state, settings, output),
+        SyntaxKind::RawDelim => skip_formatting(node, state, settings, output),
+        SyntaxKind::RawTrimmed => skip_formatting(node, state, settings, output),
         SyntaxKind::Link => format_default(node, state, settings, output),
         SyntaxKind::Label => format_label(node, state, settings, output),
         SyntaxKind::Ref => format_default(node, state, settings, output),
@@ -117,6 +120,7 @@ pub fn format(
         SyntaxKind::Import => output.raw(node, &state, settings),
         SyntaxKind::Include => output.raw(node, &state, settings),
         SyntaxKind::As => output.raw(node, &state, settings),
+        SyntaxKind::Context => output.raw(node, &state, settings),
 
         SyntaxKind::Code => format_default(node, state, settings, output),
         SyntaxKind::Ident => format_default(node, state, settings, output),
@@ -155,6 +159,7 @@ pub fn format(
         SyntaxKind::Destructuring => format_items(node, state, settings, output),
         SyntaxKind::DestructAssignment => format_default(node, state, settings, output),
         SyntaxKind::RenamedImportItem => format_default(node, state, settings, output),
+        SyntaxKind::Contextual => format_default(node, state, settings, output),
 
         SyntaxKind::LineComment => format_and_new_line(node, state, settings, output),
         SyntaxKind::BlockComment => format_default(node, state, settings, output),
@@ -280,6 +285,7 @@ fn format_space(
         Mode::Markdown => settings.preserve_newline.content,
         Mode::Math => settings.preserve_newline.math,
         Mode::Items => false,
+        Mode::MultilineItems => true,
     };
     if preserve {
         match node

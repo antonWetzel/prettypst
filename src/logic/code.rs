@@ -145,8 +145,13 @@ pub fn format_items(
             _ => trailing_comma = false,
         }
     }
-    state.mode = Mode::Items;
     let single = !trailing_comma || comma_count <= 1;
+    state.mode = if single {
+        Mode::Items
+    } else {
+        Mode::MultilineItems
+    };
+
     for child in node.children() {
         match child.kind() {
             SyntaxKind::LeftParen => {
@@ -163,7 +168,7 @@ pub fn format_items(
                     format_optional_padding(child, state, settings, output, &settings.comma);
                 } else {
                     format(child, state, settings, output);
-                    output.set_whitespace(Whitespace::LineBreak, Priority::High);
+                    output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
                 }
             }
             SyntaxKind::RightParen => {

@@ -8,6 +8,7 @@ pub enum Mode {
     Math,
     /// `(_, ...)`
     Items,
+    MultilineItems,
 }
 
 #[derive(Clone, Copy)]
