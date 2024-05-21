@@ -12,10 +12,14 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 serde = { version = "1.0.184", features = ["derive"] }
-typst-syntax = "0.11.0"
+typst-syntax = "0.11.1"
 clap = { version = "4.4", features = ["derive", "env"] }
 toml = { version = "0.8", default-features = false, features = [
     "parse",
     "display",
 ] }
 thiserror = "1.0.50"
+
+[features]
+default = []
+print-root = []

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2024.05.21
+
+- **CHANGE** | Ignore trailing comma only in **arrays** with one item
+- Add some tests
+- Update **typst-syntax**
+
 ## 2023.12.06 | Update 1.1
 
 - **BREAKING** | change settings to `kabab-case`

@@ -104,6 +104,9 @@ pub fn format_node(
     let state = State::new();
     logic::format(node, state, settings, &mut output);
 
+    #[cfg(feature = "print-root")]
+    println!("{:#?}", node);
+
     // ensure end of file is always present
     logic::format(
         &SyntaxNode::leaf(SyntaxKind::Eof, ""),

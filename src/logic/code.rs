@@ -145,7 +145,9 @@ pub fn format_items(
             _ => trailing_comma = false,
         }
     }
-    let single = !trailing_comma || comma_count <= 1;
+
+    let force_single_inline = matches!(node.kind(), SyntaxKind::Array);
+    let single = !trailing_comma || (force_single_inline && comma_count <= 1);
     state.mode = if single {
         Mode::Items
     } else {
@@ -305,7 +307,7 @@ fn get_column_count(node: &SyntaxNode, column_argument: &str) -> usize {
                         .children()
                         .fold(0, |count, value| match value.kind() {
                             SyntaxKind::Auto
-                            | SyntaxKind::Int // would be compile error, but would be strange to skip for formatting
+                            | SyntaxKind::Int
                             | SyntaxKind::Numeric
                             | SyntaxKind::Float => count + 1,
                             _ => count,
