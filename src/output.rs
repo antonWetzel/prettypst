@@ -4,7 +4,7 @@ use crate::state::State;
 
 use super::settings::Settings;
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub enum Whitespace {
     None,
     Space,
@@ -13,13 +13,48 @@ pub enum Whitespace {
     LineBreaks(usize),
 }
 
-#[derive(Clone, Copy, PartialEq)]
-pub enum Priority {
-    Lowest,
-    Low,
-    Normal,
-    High,
-    Guaranteed,
+impl Whitespace {
+    pub fn new(text: &str) -> Self {
+        fn count_newlines(text: &str) -> usize {
+            let mut newlines = 0;
+            let mut chars = text.chars().peekable();
+            while let Some(c) = chars.next() {
+                if typst_syntax::is_newline(c) {
+                    if c == '\r' {
+                        if chars.peek() == Some(&'\n') {
+                            chars.next();
+                        }
+                    }
+                    newlines += 1;
+                }
+            }
+            newlines
+        }
+
+        match count_newlines(text) {
+            0 if text.is_empty() => Self::None,
+            0 if text.len() == 1 => Self::Space,
+            0 => Self::Spaces(text.len()),
+            1 => Self::LineBreak,
+            other => Self::LineBreaks(other),
+        }
+    }
+
+    pub fn limit(self) -> Self {
+        match self {
+            Self::None => Self::None,
+            Self::Space | Self::Spaces(_) => Self::Space,
+            Self::LineBreak => Self::LineBreak,
+            Self::LineBreaks(_) => Self::LineBreaks(2),
+        }
+    }
+
+    pub fn as_linebreak(self) -> Self {
+        match self {
+            Self::LineBreaks(_) => Self::LineBreaks(2),
+            _ => Self::LineBreak,
+        }
+    }
 }
 
 pub trait OutputTarget {
@@ -34,16 +69,14 @@ impl<T: std::io::Write> OutputTarget for T {
 
 pub struct Output<'a, Target: OutputTarget> {
     target: &'a mut Target,
-    whitespace: Whitespace,
-    priority: Priority,
+    ws: Whitespace,
 }
 
 impl<'a, Target: OutputTarget> Output<'a, Target> {
     pub fn new(target: &'a mut Target) -> Self {
         Self {
             target,
-            whitespace: Whitespace::None,
-            priority: Priority::Guaranteed,
+            ws: Whitespace::None,
         }
     }
 
@@ -70,8 +103,15 @@ impl<'a, Target: OutputTarget> Output<'a, Target> {
         }
     }
 
-    pub fn emit_whitespace(&mut self, state: &State, settings: &Settings) {
-        match self.whitespace {
+    pub fn emit_whitespace(&mut self, whitespace: Whitespace) {
+        self.ws = whitespace;
+    }
+
+    pub fn text(&mut self, text: &str, state: &State, settings: &Settings) {
+        if text.is_empty() {
+            return;
+        }
+        match std::mem::replace(&mut self.ws, Whitespace::None) {
             Whitespace::None => {}
             Whitespace::Space => self.target.emit(" ", settings),
             Whitespace::Spaces(amount) => {
@@ -87,55 +127,8 @@ impl<'a, Target: OutputTarget> Output<'a, Target> {
                 self.emit_indentation(state, settings)
             }
         }
-        self.whitespace = Whitespace::None;
-        self.priority = Priority::Lowest;
-    }
 
-    pub fn raw(&mut self, node: &SyntaxNode, state: &State, settings: &Settings) {
-        if node.text().is_empty() {
-            return;
-        }
-        self.emit_whitespace(state, settings);
-        self.target.emit(node.text(), settings);
-    }
-
-    pub fn set_whitespace(&mut self, whitespace: Whitespace, priority: Priority) {
-        if self.priority == priority {
-            // use larger whitespace
-            match (self.whitespace, whitespace) {
-                (Whitespace::None, _) => {}
-                (Whitespace::Space, Whitespace::Spaces(_)) => {}
-                (Whitespace::Space, Whitespace::LineBreak) => {}
-                (Whitespace::Space, Whitespace::LineBreaks(_)) => {}
-                (Whitespace::Spaces(before), Whitespace::Spaces(after)) if after > before => {}
-                (Whitespace::Spaces(_), Whitespace::LineBreak) => {}
-                (Whitespace::Spaces(_), Whitespace::LineBreaks(_)) => {}
-                (Whitespace::LineBreak, Whitespace::LineBreaks(_)) => {}
-                (Whitespace::LineBreaks(before), Whitespace::LineBreaks(after))
-                    if after > before => {}
-                _ => return,
-            }
-        } else {
-            // use higher priority
-            match (self.priority, priority) {
-                (Priority::Lowest, _) => {}
-                (Priority::Low, Priority::Normal) => {}
-                (Priority::Low, Priority::High) => {}
-                (Priority::Normal, Priority::High) => {}
-                (_, Priority::Guaranteed) => {}
-                _ => return,
-            }
-        }
-        self.whitespace = whitespace;
-        self.priority = priority;
-    }
-
-    pub fn get_whitespace(&self) -> (Whitespace, Priority) {
-        (self.whitespace, self.priority)
-    }
-
-    pub fn finish(mut self, state: &State, settings: &Settings) {
-        self.emit_whitespace(state, settings);
+        self.target.emit(text, settings);
     }
 }
 
@@ -180,7 +173,5 @@ impl Output<'_, PositionCalculator> {
 
     pub fn reset(&mut self) {
         self.target.reset();
-        self.whitespace = Whitespace::None;
-        self.priority = Priority::Guaranteed;
     }
 }

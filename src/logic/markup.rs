@@ -136,7 +136,7 @@ pub fn format_label(
     } else {
         output.set_whitespace(Whitespace::None, Priority::High);
     }
-    output.raw(node, &state, settings);
+    output.text(node, &state, settings);
     output.set_whitespace(whitespace, priority);
 }
 

@@ -100,21 +100,18 @@ pub fn format_node(
     settings: &settings::Settings,
     target: &mut impl OutputTarget,
 ) -> Result<(), FormatError> {
+    #[cfg(feature = "print-root")]
+    println!("{:#?}", node);
+
     let mut output = Output::new(target);
     let state = State::new();
     logic::format(node, state, settings, &mut output);
 
-    #[cfg(feature = "print-root")]
-    println!("{:#?}", node);
-
     // ensure end of file is always present
-    logic::format(
-        &SyntaxNode::leaf(SyntaxKind::Eof, ""),
-        state,
-        settings,
-        &mut output,
-    );
-    output.finish(&state, settings);
+    if settings.final_newline {
+        output.emit_whitespace(output::Whitespace::LineBreak);
+        output.text("", &state, settings);
+    }
     Ok(())
 }
 

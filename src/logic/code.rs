@@ -126,7 +126,7 @@ pub fn format_semicolon(
     output: &mut Output<impl OutputTarget>,
 ) {
     output.set_whitespace(Whitespace::None, Priority::Guaranteed);
-    output.raw(node, &state, settings);
+    output.text(node, &state, settings);
 }
 
 pub fn format_items(

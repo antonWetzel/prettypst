@@ -1,17 +1,39 @@
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub enum Mode {
-    /// `[...]` or top level
-    Markdown,
-    /// `{...}`
-    Code,
-    /// `$...$`
-    Math,
-    /// `(_, ...)`
-    Items,
-    MultilineItems,
+    SinglelineMarkdown,
+    MultilineMarkdown,
+
+    SinglelineCode,
+    MultilineCode,
+
+    SinglelineArgs,
+    MultilineArgs,
 }
 
-#[derive(Clone, Copy)]
+impl Mode {
+    pub fn preserve_linebreak(self) -> bool {
+        match self {
+            Self::SinglelineMarkdown => false,
+            Self::MultilineMarkdown => false,
+            Self::SinglelineCode => false,
+            Self::MultilineCode => true,
+            Self::SinglelineArgs => false,
+            Self::MultilineArgs => true,
+        }
+    }
+    pub fn preserve_linebreaks(self) -> bool {
+        match self {
+            Self::SinglelineMarkdown => true,
+            Self::MultilineMarkdown => true,
+            Self::SinglelineCode => false,
+            Self::MultilineCode => true,
+            Self::SinglelineArgs => false,
+            Self::MultilineArgs => true,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 pub struct State {
     pub indentation: usize,
     pub extra_indentation: usize,
@@ -23,7 +45,7 @@ impl State {
         Self {
             indentation: 0,
             extra_indentation: 0,
-            mode: Mode::Markdown,
+            mode: Mode::MultilineMarkdown,
         }
     }
     pub fn indent(&mut self) {

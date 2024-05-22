@@ -28,22 +28,22 @@ pub fn format_multi_line_equation(
             SyntaxKind::Dollar => match (state.mode, &settings.block.long_block_style) {
                 (Mode::Math, LongBlockStyle::Compact) => {
                     output.set_whitespace(Whitespace::Space, Priority::Guaranteed);
-                    output.raw(child, &state, settings);
+                    output.text(child, &state, settings);
                     output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
                 }
                 (_, LongBlockStyle::Compact) => {
                     output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
-                    output.raw(child, &state, settings);
+                    output.text(child, &state, settings);
                     output.set_whitespace(Whitespace::Space, Priority::Normal);
                     state.mode = Mode::Math;
                 }
                 (Mode::Math, LongBlockStyle::Seperate) => {
                     state.dedent();
                     output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
-                    output.raw(child, &state, settings);
+                    output.text(child, &state, settings);
                 }
                 (_, LongBlockStyle::Seperate) => {
-                    output.raw(child, &state, settings);
+                    output.text(child, &state, settings);
                     state.indent();
                     output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
                     state.mode = Mode::Math;
@@ -158,10 +158,10 @@ fn format_inline_equation(
                 } else {
                     output.set_whitespace(Whitespace::None, Priority::High);
                 }
-                output.raw(child, &state, settings);
+                output.text(child, &state, settings);
             }
             (_, SyntaxKind::Dollar) => {
-                output.raw(child, &state, settings);
+                output.text(child, &state, settings);
                 if needs_spaces {
                     output.set_whitespace(Whitespace::Space, Priority::Guaranteed);
                 } else {
