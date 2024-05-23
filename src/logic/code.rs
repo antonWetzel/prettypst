@@ -141,7 +141,7 @@ pub fn format_items(
         match child.kind() {
             SyntaxKind::Comma => (trailing_comma, comma_count) = (true, comma_count + 1),
             SyntaxKind::RightParen => break,
-            SyntaxKind::Space => {}
+            SyntaxKind::Space | SyntaxKind::LineComment | SyntaxKind::BlockComment => {}
             _ => trailing_comma = false,
         }
     }

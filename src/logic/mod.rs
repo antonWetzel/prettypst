@@ -209,7 +209,7 @@ fn format_and_new_line(
     output: &mut Output<impl OutputTarget>,
 ) {
     format_default(node, state, settings, output);
-    output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
+    output.set_whitespace(Whitespace::LineBreak, Priority::High);
 }
 
 fn format_right_bound(
