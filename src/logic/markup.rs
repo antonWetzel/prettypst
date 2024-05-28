@@ -58,7 +58,7 @@ pub fn format_content_block(
         }
     }
     let single = !start_space || !end_space || !linebreak;
-    state.mode = Mode::Markdown;
+    state.mode = Mode::Markup;
     for child in node.children() {
         match child.kind() {
             SyntaxKind::LeftBracket => {
@@ -142,7 +142,7 @@ pub fn format_label(
 
 pub fn format_term(
     node: &SyntaxNode,
-    state: State,
+    mut state: State,
     settings: &Settings,
     output: &mut Output<impl OutputTarget>,
 ) {
@@ -150,6 +150,7 @@ pub fn format_term(
         match child.kind() {
             SyntaxKind::Colon => {
                 format_optional_padding(child, state, settings, output, &settings.term);
+                state.indent();
             }
             _ => format(child, state, settings, output),
         }

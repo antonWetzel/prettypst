@@ -1,7 +1,7 @@
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub enum Mode {
     /// `[...]` or top level
-    Markdown,
+    Markup,
     /// `{...}`
     Code,
     /// `$...$`
@@ -11,7 +11,7 @@ pub enum Mode {
     MultilineItems,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct State {
     pub indentation: usize,
     pub extra_indentation: usize,
@@ -23,7 +23,7 @@ impl State {
         Self {
             indentation: 0,
             extra_indentation: 0,
-            mode: Mode::Markdown,
+            mode: Mode::Markup,
         }
     }
     pub fn indent(&mut self) {

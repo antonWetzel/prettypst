@@ -209,7 +209,7 @@ fn format_and_new_line(
     output: &mut Output<impl OutputTarget>,
 ) {
     format_default(node, state, settings, output);
-    output.set_whitespace(Whitespace::LineBreak, Priority::High);
+    output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
 }
 
 fn format_right_bound(
@@ -282,7 +282,7 @@ fn format_space(
 ) {
     let preserve = match state.mode {
         Mode::Code => true,
-        Mode::Markdown => settings.preserve_newline.content,
+        Mode::Markup => settings.preserve_newline.content,
         Mode::Math => settings.preserve_newline.math,
         Mode::Items => false,
         Mode::MultilineItems => true,
@@ -335,14 +335,14 @@ pub fn format_optional_padding(
     padding: &PaddingSettings,
 ) {
     if padding.space_before {
-        output.set_whitespace(Whitespace::Space, Priority::High);
+        output.set_whitespace(Whitespace::Space, Priority::Normal);
     } else {
-        output.set_whitespace(Whitespace::None, Priority::High);
+        output.set_whitespace(Whitespace::None, Priority::Normal);
     }
     format(node, state, settings, output);
     if padding.space_after {
-        output.set_whitespace(Whitespace::Space, Priority::High);
+        output.set_whitespace(Whitespace::Space, Priority::Normal);
     } else {
-        output.set_whitespace(Whitespace::None, Priority::High);
+        output.set_whitespace(Whitespace::None, Priority::Normal);
     }
 }

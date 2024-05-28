@@ -99,7 +99,7 @@ pub fn format_node(
     node: &SyntaxNode,
     settings: &settings::Settings,
     target: &mut impl OutputTarget,
-) -> Result<(), FormatError> {
+) {
     let mut output = Output::new(target);
     let state = State::new();
     logic::format(node, state, settings, &mut output);
@@ -115,14 +115,9 @@ pub fn format_node(
         &mut output,
     );
     output.finish(&state, settings);
-    Ok(())
 }
 
-pub fn format_str(
-    text: &str,
-    settings: &settings::Settings,
-    target: &mut impl OutputTarget,
-) -> Result<(), FormatError> {
+pub fn format_str(text: &str, settings: &settings::Settings, target: &mut impl OutputTarget) {
     format_node(&typst_syntax::parse(text), settings, target)
 }
 
@@ -187,12 +182,12 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
         (Some(out), false) => {
             let file = File::create(out).map_err(FormatError::FailedToCreateOutputFile)?;
             let mut target = BufWriter::new(file);
-            format_node(&root, &settings, &mut target)?;
+            format_node(&root, &settings, &mut target);
             drop(target);
         }
         (None, true) => {
             let mut target = BufWriter::new(std::io::stdout());
-            format_node(&root, &settings, &mut target)?;
+            format_node(&root, &settings, &mut target);
             drop(target);
         }
         (None, false) => {
@@ -200,7 +195,7 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
             let file =
                 File::create(&temp_path).map_err(FormatError::FailedToCreateTemporaryFile)?;
             let mut target = BufWriter::new(file);
-            format_node(&root, &settings, &mut target)?;
+            format_node(&root, &settings, &mut target);
             drop(target);
 
             fs::rename(temp_path, input_name).map_err(FormatError::FailedToReplaceInputFile)?;
