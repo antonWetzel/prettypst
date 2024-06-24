@@ -1,5 +1,10 @@
 # Changelog
 
+## 2024.06.24
+
+- **ADD** | Better formatting for `(grid|table).(cell|header|footer)`
+- Update tests
+
 ## 2024.05.21
 
 - **CHANGE** | Ignore trailing comma only in **arrays** with one item
