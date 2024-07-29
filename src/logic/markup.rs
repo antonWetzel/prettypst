@@ -130,14 +130,19 @@ pub fn format_label(
     settings: &Settings,
     output: &mut Output<impl OutputTarget>,
 ) {
-    let (whitespace, priority) = output.get_whitespace();
-    if settings.seperate_label {
-        output.set_whitespace(Whitespace::Space, Priority::Guaranteed);
-    } else {
-        output.set_whitespace(Whitespace::None, Priority::High);
+    match state.mode {
+        Mode::Markup => {
+            let (whitespace, priority) = output.get_whitespace();
+            if settings.seperate_label {
+                output.set_whitespace(Whitespace::Space, Priority::High);
+            } else {
+                output.set_whitespace(Whitespace::None, Priority::High);
+            }
+            output.raw(node, &state, settings);
+            output.set_whitespace(whitespace, priority);
+        }
+        _ => output.raw(node, &state, settings),
     }
-    output.raw(node, &state, settings);
-    output.set_whitespace(whitespace, priority);
 }
 
 pub fn format_term(

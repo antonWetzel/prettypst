@@ -1,5 +1,10 @@
 # Changelog
 
+## 2024.07.29
+
+- **ADD** | Only format label in Markup 
+- Update tests
+
 ## 2024.06.24
 
 - **ADD** | Better formatting for `(grid|table).(cell|header|footer)`

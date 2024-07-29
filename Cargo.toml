@@ -11,14 +11,14 @@ categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = { version = "1.0.184", features = ["derive"] }
+serde = { version = "1.0.204", features = ["derive"] }
 typst-syntax = "0.11.1"
-clap = { version = "4.4", features = ["derive", "env"] }
+clap = { version = "4.5", features = ["derive", "env"] }
 toml = { version = "0.8", default-features = false, features = [
     "parse",
     "display",
 ] }
-thiserror = "1.0.50"
+thiserror = "1.0.63"
 
 [features]
 default = []
