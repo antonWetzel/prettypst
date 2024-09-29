@@ -134,9 +134,9 @@ pub fn format_label(
         Mode::Markup => {
             let (whitespace, priority) = output.get_whitespace();
             if settings.seperate_label {
-                output.set_whitespace(Whitespace::Space, Priority::High);
+                output.set_whitespace(Whitespace::Space, Priority::Guaranteed);
             } else {
-                output.set_whitespace(Whitespace::None, Priority::High);
+                output.set_whitespace(Whitespace::None, Priority::Guaranteed);
             }
             output.raw(node, &state, settings);
             output.set_whitespace(whitespace, priority);

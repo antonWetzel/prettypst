@@ -1,5 +1,10 @@
 # Changelog
 
+## 2024.09.29
+
+- **Fix** | Higher priority for labels to fix labels for headings
+- Update tests
+
 ## 2024.07.29
 
 - **ADD** | Only format label in Markup 
@@ -36,4 +41,5 @@
 		space-before = false
 		space-after = true
 		```
+
 ## 2023.11.21 | Release
