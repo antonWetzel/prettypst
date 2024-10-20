@@ -109,7 +109,7 @@ pub fn format_node(
 
     // ensure end of file is always present
     logic::format(
-        &SyntaxNode::leaf(SyntaxKind::Eof, ""),
+        &SyntaxNode::leaf(SyntaxKind::End, ""),
         state,
         settings,
         &mut output,

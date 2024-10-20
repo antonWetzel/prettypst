@@ -60,6 +60,7 @@ pub fn format(
 
         SyntaxKind::Math => format_default(node, state, settings, output),
         SyntaxKind::MathIdent => format_default(node, state, settings, output),
+        SyntaxKind::MathShorthand => format_default(node, state, settings, output),
         SyntaxKind::MathAlignPoint => format_default(node, state, settings, output),
         SyntaxKind::MathDelimited => format_default(node, state, settings, output),
         SyntaxKind::MathAttach => format_math_attach(node, state, settings, output),
@@ -152,6 +153,7 @@ pub fn format(
         SyntaxKind::ForLoop => format_default(node, state, settings, output),
         SyntaxKind::ModuleImport => format_import(node, state, settings, output),
         SyntaxKind::ImportItems => format_default(node, state, settings, output),
+        SyntaxKind::ImportItemPath => format_default(node, state, settings, output),
         SyntaxKind::ModuleInclude => format_code_statement(node, state, settings, output),
         SyntaxKind::LoopBreak => format_default(node, state, settings, output),
         SyntaxKind::LoopContinue => format_default(node, state, settings, output),
@@ -164,7 +166,7 @@ pub fn format(
         SyntaxKind::LineComment => format_and_new_line(node, state, settings, output),
         SyntaxKind::BlockComment => format_default(node, state, settings, output),
         SyntaxKind::Error => format_default(node, state, settings, output),
-        SyntaxKind::Eof => format_end_of_file(node, state, settings, output),
+        SyntaxKind::End => format_end_of_file(node, state, settings, output),
     }
 }
 

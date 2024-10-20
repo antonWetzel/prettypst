@@ -1,5 +1,9 @@
 # Changelog
 
+## 2024.10.20
+
+- Update dependencies
+
 ## 2024.09.29
 
 - **Fix** | Higher priority for labels to fix labels for headings
