@@ -68,7 +68,7 @@
 
 ```gdscript
 indentation = 0 | 1 | ... # use 0 for tabs
-seperate-label = false | true # insert space before a label
+separate-label = false | true # insert space before a label
 final-newline = false | true # insert a final newline at the end
 
 [preserve-newline]
@@ -76,7 +76,7 @@ content = false | true # preserve single newlines in markup
 math = false | true # preserve single newline in equations
 
 [block]
-long-block-style = "seperate" | "compact" # '[' and ']' on the same or seperate lines as the content
+long-block-style = "separate" | "compact" # '[' and ']' on the same or separate lines as the content
 
 [term]
 space-before = false | true # insert a space before the ':' in terms

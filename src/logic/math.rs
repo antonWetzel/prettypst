@@ -37,12 +37,12 @@ pub fn format_multi_line_equation(
                     output.set_whitespace(Whitespace::Space, Priority::Normal);
                     state.mode = Mode::Math;
                 }
-                (Mode::Math, LongBlockStyle::Seperate) => {
+                (Mode::Math, LongBlockStyle::Separate) => {
                     state.dedent();
                     output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
                     output.raw(child, &state, settings);
                 }
-                (_, LongBlockStyle::Seperate) => {
+                (_, LongBlockStyle::Separate) => {
                     output.raw(child, &state, settings);
                     state.indent();
                     output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
