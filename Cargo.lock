@@ -191,7 +191,7 @@ checksum = "cc9c68a3f6da06753e9335d63e27f6b9754dd1920d941135b7ea8224f141adb2"
 
 [[package]]
 name = "prettypst"
-version = "1.1.2"
+version = "2.0.0"
 dependencies = [
  "clap",
  "serde",

@@ -1,6 +1,6 @@
 [package]
 name = "prettypst"
-version = "1.1.2"
+version = "2.0.0"
 edition = "2021"
 description = "Formatter for Typst"
 license-file = "LICENSE"

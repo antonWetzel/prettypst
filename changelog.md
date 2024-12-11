@@ -1,5 +1,9 @@
 # Changelog
 
+## 2024.12.11
+
+- **BREAKING** | Correct spelling mistake (seperate $\to$ separate)
+
 ## 2024.10.20
 
 - Update dependencies
