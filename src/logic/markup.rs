@@ -75,7 +75,7 @@ pub fn format_content_block(
                         LongBlockStyle::Compact => {
                             output.set_whitespace(Whitespace::Space, Priority::Low)
                         }
-                        LongBlockStyle::Seperate => {
+                        LongBlockStyle::Separate => {
                             output.set_whitespace(Whitespace::LineBreak, Priority::Normal)
                         }
                     }
@@ -95,7 +95,7 @@ pub fn format_content_block(
                         LongBlockStyle::Compact => {
                             output.set_whitespace(Whitespace::Space, Priority::Low)
                         }
-                        LongBlockStyle::Seperate => {
+                        LongBlockStyle::Separate => {
                             output.set_whitespace(Whitespace::LineBreak, Priority::Normal)
                         }
                     }
@@ -133,7 +133,7 @@ pub fn format_label(
     match state.mode {
         Mode::Markup => {
             let (whitespace, priority) = output.get_whitespace();
-            if settings.seperate_label {
+            if settings.separate_label {
                 output.set_whitespace(Whitespace::Space, Priority::Guaranteed);
             } else {
                 output.set_whitespace(Whitespace::None, Priority::Guaranteed);

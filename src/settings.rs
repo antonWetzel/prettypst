@@ -70,7 +70,7 @@ pub enum UseLongBlock {
 #[serde(rename_all = "kebab-case")]
 pub enum LongBlockStyle {
     Compact,
-    Seperate,
+    Separate,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -131,7 +131,7 @@ create_normal_and_partial!(
 
     struct Settings | PartialSettings {
         pub indentation: usize,
-        pub seperate_label: bool,
+        pub separate_label: bool,
         pub final_newline: bool,
         pub preserve_newline: PreserveNewLine,
         pub block: BlockSettings,

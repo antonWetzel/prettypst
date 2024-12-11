@@ -17,7 +17,7 @@ impl Styles {
         match self {
             Self::Default => Settings {
                 indentation: 2,
-                seperate_label: true,
+                separate_label: true,
                 preserve_newline: PreserveNewLine {
                     content: true,
                     math: true,
@@ -65,7 +65,7 @@ impl Styles {
             },
             Self::Otbs => Settings {
                 indentation: 0,
-                seperate_label: true,
+                separate_label: true,
                 preserve_newline: PreserveNewLine {
                     content: false,
                     math: true,
@@ -94,7 +94,7 @@ impl Styles {
                     comma: AlignComma::EndOfContent,
                 },
                 block: BlockSettings {
-                    long_block_style: LongBlockStyle::Seperate,
+                    long_block_style: LongBlockStyle::Separate,
                 },
                 final_newline: true,
                 heading: HeadingSettings {
