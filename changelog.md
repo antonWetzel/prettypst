@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025.03.03 | Update 3.0
+
+- **BREAKING** | Update to typst 0.13
+
 ## 2024.12.11
 
 - **BREAKING** | Correct spelling mistake (seperate $\to$ separate)

@@ -1,6 +1,6 @@
 [package]
 name = "prettypst"
-version = "2.0.0"
+version = "3.0.0"
 edition = "2021"
 description = "Formatter for Typst"
 license-file = "LICENSE"
@@ -12,13 +12,13 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 serde = { version = "1.0.204", features = ["derive"] }
-typst-syntax = "0.12.0"
+typst-syntax = "0.13.0"
 clap = { version = "4.5", features = ["derive", "env"] }
 toml = { version = "0.8", default-features = false, features = [
     "parse",
     "display",
 ] }
-thiserror = "1.0.63"
+thiserror = "2.0.12"
 
 [features]
 default = []

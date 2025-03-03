@@ -30,6 +30,7 @@ pub fn format(
     }
 
     match node.kind() {
+        SyntaxKind::Shebang => format_and_new_line(node, state, settings, output),
         SyntaxKind::Markup => format_markup(node, state, settings, output),
         SyntaxKind::Text => format_default(node, state, settings, output),
         SyntaxKind::Space => format_space(node, state, settings, output),
@@ -59,6 +60,7 @@ pub fn format(
         SyntaxKind::Equation => format_equation(node, state, settings, output),
 
         SyntaxKind::Math => format_default(node, state, settings, output),
+        SyntaxKind::MathText => format_default(node, state, settings, output),
         SyntaxKind::MathIdent => format_default(node, state, settings, output),
         SyntaxKind::MathShorthand => format_default(node, state, settings, output),
         SyntaxKind::MathAlignPoint => format_default(node, state, settings, output),
