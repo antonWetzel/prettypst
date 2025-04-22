@@ -9,7 +9,7 @@ use math::*;
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
 use crate::{
-    output::{Output, OutputTarget, PositionCalculator, Priority, Whitespace},
+    output::{Output, OutputTarget, Priority, Whitespace},
     settings::*,
     state::{Mode, State},
 };
@@ -32,15 +32,15 @@ pub fn format(
     match node.kind() {
         SyntaxKind::Shebang => format_and_new_line(node, state, settings, output),
         SyntaxKind::Markup => format_markup(node, state, settings, output),
-        SyntaxKind::Text => format_default(node, state, settings, output),
+        SyntaxKind::Text => format_text(node, state, settings, output),
         SyntaxKind::Space => format_space(node, state, settings, output),
         SyntaxKind::Linebreak => format_and_new_line(node, state, settings, output),
         SyntaxKind::Parbreak => output.set_whitespace(Whitespace::LineBreaks(2), Priority::High),
         SyntaxKind::Escape => format_default(node, state, settings, output),
         SyntaxKind::Shorthand => format_default(node, state, settings, output),
         SyntaxKind::SmartQuote => format_default(node, state, settings, output),
-        SyntaxKind::Strong => format_default(node, state, settings, output),
-        SyntaxKind::Emph => format_default(node, state, settings, output),
+        SyntaxKind::Strong => format_enclosed(node, state, settings, output),
+        SyntaxKind::Emph => format_enclosed(node, state, settings, output),
         SyntaxKind::Raw => skip_formatting(node, state, settings, output),
         SyntaxKind::RawLang => skip_formatting(node, state, settings, output),
         SyntaxKind::RawDelim => skip_formatting(node, state, settings, output),
@@ -49,7 +49,7 @@ pub fn format(
         SyntaxKind::Label => format_label(node, state, settings, output),
         SyntaxKind::Ref => format_default(node, state, settings, output),
         SyntaxKind::RefMarker => format_default(node, state, settings, output),
-        SyntaxKind::Heading => format_heading(settings, node, state, output),
+        SyntaxKind::Heading => format_heading(node, state, settings, output),
         SyntaxKind::HeadingMarker => format_default(node, state, settings, output),
         SyntaxKind::ListItem => format_list(node, state, settings, output),
         SyntaxKind::ListMarker => format_default(node, state, settings, output),
@@ -238,16 +238,21 @@ fn skip_formatting(
     }
 }
 
-fn get_length(node: &SyntaxNode, settings: &Settings) -> Option<usize> {
-    let mut calculator = PositionCalculator::new();
-    let mut output = Output::new(&mut calculator);
-    let state = State::new();
-    format(node, state, settings, &mut output);
+fn get_length(
+    node: &SyntaxNode,
+    state: State,
+    settings: &Settings,
+    output: &mut Output<impl OutputTarget>,
+) -> Option<usize> {
+    let fixpoint = output.create_fixpoint();
+    let (start_line, start_column) = output.position();
+    format(node, state, settings, output);
     let (line, column) = output.position();
-    if line > 1 {
+    output.set_fixpoint(fixpoint);
+    if start_line != line {
         None
     } else {
-        Some(column)
+        Some(column - start_column)
     }
 }
 
@@ -286,17 +291,13 @@ fn format_space(
 ) {
     let preserve = match state.mode {
         Mode::Code => true,
-        Mode::Markup => settings.preserve_newline.content,
+        Mode::Markup | Mode::MarkupBreakable => settings.preserve_newline.content,
         Mode::Math => settings.preserve_newline.math,
         Mode::Items => false,
         Mode::MultilineItems => true,
     };
     if preserve {
-        match node
-            .text()
-            .chars()
-            .fold(0, |acc, c| acc + (c == '\n') as usize)
-        {
+        match node.text().chars().filter(|&c| c == '\n').count() {
             0 => output.set_whitespace(Whitespace::Space, Priority::Low),
             1 => output.set_whitespace(Whitespace::LineBreak, Priority::Normal),
             _ => output.set_whitespace(Whitespace::LineBreaks(2), Priority::Normal),

@@ -74,30 +74,34 @@ fn format_multi_line_math(
     }
 
     let lengths = {
+        let fixpoint = output.create_fixpoint();
+        output.zero_position();
+
         let mut lengths = Vec::new();
         let mut line = Vec::new();
-        let mut calculator = PositionCalculator::new();
-        let mut calc = Output::new(&mut calculator);
+
         for child in node.children() {
             match child.kind() {
                 SyntaxKind::MathAlignPoint => {
-                    line.push(calc.position().1);
-                    calc.reset();
+                    line.push(output.position().1);
+                    output.zero_position();
                 }
                 SyntaxKind::Linebreak => {
-                    line.push(calc.position().1);
-                    calc.reset();
+                    line.push(output.position().1);
+                    output.zero_position();
                     lengths.push(std::mem::take(&mut line));
                 }
                 _ => {
-                    format(child, state, settings, &mut calc);
+                    format(child, state, settings, output);
                 }
             }
         }
-        if calc.position().1 != 0 {
-            line.push(calc.position().1);
+        if output.position().1 != 0 {
+            line.push(output.position().1);
         }
         lengths.push(line);
+
+        output.set_fixpoint(fixpoint);
         lengths
     };
 

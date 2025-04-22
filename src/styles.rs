@@ -22,6 +22,11 @@ impl Styles {
                     content: true,
                     math: true,
                 },
+                automatic_newline: AutomaticNewLine {
+                    max_width: 100,
+                    in_strong: false,
+                    in_emphasis: false,
+                },
                 term: PaddingSettings {
                     space_before: false,
                     space_after: true,
@@ -69,6 +74,11 @@ impl Styles {
                 preserve_newline: PreserveNewLine {
                     content: false,
                     math: true,
+                },
+                automatic_newline: AutomaticNewLine {
+                    max_width: 0,
+                    in_strong: false,
+                    in_emphasis: false,
                 },
                 term: PaddingSettings {
                     space_before: false,

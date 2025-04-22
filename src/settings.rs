@@ -80,13 +80,6 @@ pub enum AlignComma {
     EndOfCell,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
-#[serde(rename_all = "kebab-case")]
-pub enum ColumnArgument {
-    Default,
-    Custom(String),
-}
-
 identity_overwrite!(usize, bool, UseLongBlock, LongBlockStyle, AlignComma);
 
 impl<K: std::hash::Hash + std::cmp::Eq, T> Overwrite for HashMap<K, T> {
@@ -127,6 +120,13 @@ create_normal_and_partial!(
     struct PreserveNewLine | PartialPreserveNewLine {
         pub content: bool,
         pub math: bool,
+
+    }
+
+    struct AutomaticNewLine | PartialAutomaticNewLine {
+        pub max_width: usize,
+        pub in_strong: bool,
+        pub in_emphasis: bool,
     }
 
     struct Settings | PartialSettings {
@@ -134,6 +134,7 @@ create_normal_and_partial!(
         pub separate_label: bool,
         pub final_newline: bool,
         pub preserve_newline: PreserveNewLine,
+        pub automatic_newline: AutomaticNewLine,
         pub block: BlockSettings,
         pub term: PaddingSettings,
         pub named_argument: PaddingSettings,

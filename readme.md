@@ -307,6 +307,11 @@ final-newline = false | true # insert a final newline at the end
 content = false | true # preserve single newlines in markup
 math = false | true # preserve single newline in equations
 
+[automatic-newline]
+max-width = 0 # insert a linebreak if the current line would exceed the max width, use zero to disable 
+in-strong = false # allow automatic linebreak in strong (*...*)
+in-emphasis = false # allow automatic linebreak in emphasis (_..._)
+
 [block]
 long-block-style = "separate" | "compact" # '[' and ']' on the same or separate lines as the content
 

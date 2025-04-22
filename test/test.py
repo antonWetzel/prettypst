@@ -5,7 +5,12 @@ styles = ["default", "otbs"]
 import os
 import subprocess
 import shutil
+import sys
 
+if len(sys.argv) >= 2:
+    include = sys.argv[1]
+else:
+    include = None
 
 test_directory = os.path.dirname(__file__)
 project_directory = os.path.dirname(test_directory)
@@ -23,6 +28,8 @@ for style in styles:
         os.mkdir(out_root)
         for file in files:
             source_path = root + "/" + file
+            if include != None and include not in source_path:
+                continue
             out_path = out_root + "/" + file
             subprocess.run(["cargo", "run", "--", f"--style={style}", source_path, f"--output={out_path}"], stderr=subprocess.DEVNULL)
             source_path = os.path.relpath(source_path, test_directory)

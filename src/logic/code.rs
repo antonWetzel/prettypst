@@ -198,8 +198,13 @@ enum CellSize {
 }
 
 impl CellSize {
-    pub fn new(node: &SyntaxNode, settings: &Settings) -> Self {
-        let length = get_length(node, settings).unwrap_or(0) + 2;
+    pub fn new(
+        node: &SyntaxNode,
+        state: State,
+        settings: &Settings,
+        output: &mut Output<impl OutputTarget>,
+    ) -> Self {
+        let length = get_length(node, state, settings, output).unwrap_or(0) + 2;
         if node.kind() != SyntaxKind::FuncCall {
             return Self::Single(length);
         }
@@ -261,7 +266,13 @@ struct Aligner {
 }
 
 impl Aligner {
-    pub fn new(node: &SyntaxNode, column_argument: &str, settings: &Settings) -> Self {
+    pub fn new(
+        node: &SyntaxNode,
+        column_argument: &str,
+        state: State,
+        settings: &Settings,
+        output: &mut Output<impl OutputTarget>,
+    ) -> Self {
         let columns_count = get_column_count(node, column_argument);
         let mut cells = Vec::new();
         for child in node.children() {
@@ -277,7 +288,7 @@ impl Aligner {
                 }
                 _ => {}
             }
-            cells.push(CellSize::new(child, settings));
+            cells.push(CellSize::new(child, state, settings, output));
         }
 
         let mut column = 0;
@@ -410,7 +421,7 @@ pub fn format_column_args(
     output: &mut Output<impl OutputTarget>,
     column_argument: &str,
 ) {
-    let mut aligner = Aligner::new(node, column_argument, settings);
+    let mut aligner = Aligner::new(node, column_argument, state, settings, output);
     state.mode = Mode::Items;
 
     let mut pad = Option::<Spacing>::None;

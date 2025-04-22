@@ -1,7 +1,11 @@
+use crate::settings::Settings;
+
 #[derive(Debug, Clone, Copy)]
 pub enum Mode {
     /// `[...]` or top level
     Markup,
+    /// `[...]` or top level, where automatic linebreaks may be inserted
+    MarkupBreakable,
     /// `{...}`
     Code,
     /// `$...$`
@@ -19,13 +23,17 @@ pub struct State {
 }
 
 impl State {
-    pub fn new() -> Self {
+    pub fn new(settings: &Settings) -> Self {
         Self {
             indentation: 0,
             extra_indentation: 0,
-            mode: Mode::Markup,
+            mode: match settings.automatic_newline.max_width {
+                0 => Mode::Markup,
+                _ => Mode::MarkupBreakable,
+            },
         }
     }
+
     pub fn indent(&mut self) {
         self.indentation += 1;
     }

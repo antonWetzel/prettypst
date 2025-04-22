@@ -101,7 +101,7 @@ pub fn format_node(
     target: &mut impl OutputTarget,
 ) {
     let mut output = Output::new(target);
-    let state = State::new();
+    let state = State::new(settings);
     logic::format(node, state, settings, &mut output);
 
     #[cfg(feature = "print-root")]

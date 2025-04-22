@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025.04.22 | Update 3.1
+
+- **ADD** | Add automatic newlines in long content based on max width 
+
 ## 2025.03.03 | Update 3.0
 
 - **BREAKING** | Update to typst 0.13
