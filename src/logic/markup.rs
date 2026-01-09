@@ -38,22 +38,21 @@ pub fn format_content_block(
         if child.kind() != SyntaxKind::Markup {
             continue;
         }
-        if let Some(node) = child.children().next() {
-            if matches!(node.kind(), SyntaxKind::Space | SyntaxKind::Parbreak) {
-                start_space = true;
-                if node.text().contains('\n') {
-                    linebreak = true;
-                }
+        if let Some(node) = child.children().next()
+            && matches!(node.kind(), SyntaxKind::Space | SyntaxKind::Parbreak)
+        {
+            start_space = true;
+            if node.text().contains('\n') {
+                linebreak = true;
             }
         }
-        if let Some(node) = child.children().next_back() {
-            if matches!(node.kind(), SyntaxKind::Space | SyntaxKind::Parbreak) {
+        if let Some(node) = child.children().next_back()
+            && matches!(node.kind(), SyntaxKind::Space | SyntaxKind::Parbreak) {
                 end_space = true;
                 if node.text().contains('\n') {
                     linebreak = true;
                 }
             }
-        }
     }
     let single = !start_space || !end_space || !linebreak;
     state.mode = match settings.automatic_newline.max_width {
@@ -118,13 +117,10 @@ pub fn format_text(
     match state.mode {
         Mode::MarkupBreakable => {
             let mut iter = node.text().split(' ');
-            match output.get_whitespace().0 {
-                Whitespace::None => {
-                    if let Some(word) = iter.next() {
-                        output.raw_text(word, &state, settings);
-                    }
-                }
-                _ => {}
+            if let Whitespace::None = output.get_whitespace().0
+                && let Some(word) = iter.next()
+            {
+                output.raw_text(word, &state, settings);
             }
 
             for word in iter {

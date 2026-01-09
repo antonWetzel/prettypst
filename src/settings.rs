@@ -60,14 +60,6 @@ macro_rules! create_normal_and_partial {
 
 #[derive(Deserialize, Serialize, Debug)]
 #[serde(rename_all = "kebab-case")]
-pub enum UseLongBlock {
-    Never,
-    HasAligment,
-    Always,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
-#[serde(rename_all = "kebab-case")]
 pub enum LongBlockStyle {
     Compact,
     Separate,
@@ -80,7 +72,7 @@ pub enum AlignComma {
     EndOfCell,
 }
 
-identity_overwrite!(usize, bool, UseLongBlock, LongBlockStyle, AlignComma);
+identity_overwrite!(usize, bool, LongBlockStyle, AlignComma);
 
 impl<K: std::hash::Hash + std::cmp::Eq, T> Overwrite for HashMap<K, T> {
     type Partial = Self;
