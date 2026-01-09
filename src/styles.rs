@@ -1,8 +1,8 @@
 use std::fmt::{self, Display, Formatter};
 
-use crate::settings::*;
-
 use clap::ValueEnum;
+
+use crate::settings::*;
 
 #[derive(Debug, Copy, Clone, ValueEnum)]
 pub enum Styles {

@@ -21,3 +21,6 @@ toml = { version = "0.8", default-features = false, features = [
     "display",
 ] }
 thiserror = "2.0"
+
+[dev-dependencies]
+insta = "1.46.0"

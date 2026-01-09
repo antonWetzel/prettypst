@@ -47,12 +47,13 @@ pub fn format_content_block(
             }
         }
         if let Some(node) = child.children().next_back()
-            && matches!(node.kind(), SyntaxKind::Space | SyntaxKind::Parbreak) {
-                end_space = true;
-                if node.text().contains('\n') {
-                    linebreak = true;
-                }
+            && matches!(node.kind(), SyntaxKind::Space | SyntaxKind::Parbreak)
+        {
+            end_space = true;
+            if node.text().contains('\n') {
+                linebreak = true;
             }
+        }
     }
     let single = !start_space || !end_space || !linebreak;
     state.mode = match settings.automatic_newline.max_width {

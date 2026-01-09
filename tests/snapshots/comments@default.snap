@@ -1,0 +1,6 @@
+---
+source: src/lib.rs
+expression: output
+extension: typ
+snapshot_kind: binary
+---

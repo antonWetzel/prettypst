@@ -1,9 +1,9 @@
-use super::*;
-
 use std::{
     collections::{HashMap, HashSet},
     ops::Not,
 };
+
+use super::*;
 
 pub fn format_code_block(
     node: &SyntaxNode,

@@ -4,21 +4,18 @@ mod settings;
 mod state;
 mod styles;
 
-use state::State;
-use typst_syntax::{SyntaxKind, SyntaxNode};
-
-use output::Output;
-
-use output::OutputTarget;
 use std::{
     fs::{self, File},
     io::{BufWriter, Read},
     path::PathBuf,
 };
 
-use styles::Styles;
-
 use clap::Parser;
+use output::Output;
+use state::State;
+use typst_syntax::{SyntaxKind, SyntaxNode};
+
+pub use crate::{output::OutputTarget, settings::Settings, styles::Styles};
 
 const CONFIG_NAME: &str = "prettypst.toml";
 
@@ -95,11 +92,7 @@ pub enum FormatError {
     FailedToReplaceInputFile(std::io::Error),
 }
 
-pub fn format_node(
-    node: &SyntaxNode,
-    settings: &settings::Settings,
-    target: &mut impl OutputTarget,
-) {
+pub fn format_node(node: &SyntaxNode, settings: &Settings, target: &mut impl OutputTarget) {
     let mut output = Output::new(target);
     let state = State::new(settings);
     logic::format(node, state, settings, &mut output);

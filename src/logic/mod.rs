@@ -5,7 +5,6 @@ mod math;
 use code::*;
 use markup::*;
 use math::*;
-
 use typst_syntax::{SyntaxKind, SyntaxNode};
 
 use crate::{

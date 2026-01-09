@@ -1,8 +1,7 @@
 use typst_syntax::SyntaxNode;
 
-use crate::state::State;
-
 use super::settings::Settings;
+use crate::state::State;
 
 #[derive(Clone, Copy)]
 pub enum Whitespace {
