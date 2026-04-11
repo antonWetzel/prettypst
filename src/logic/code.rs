@@ -222,7 +222,7 @@ impl CellSize {
         };
 
         match name.as_str() {
-            "header" | "footer" => Self::FullLine,
+            "header" | "footer" | "hline" => Self::FullLine,
             "cell" => {
                 let Some(args) = node.children().find(|node| node.kind() == SyntaxKind::Args)
                 else {
