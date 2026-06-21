@@ -9,11 +9,11 @@ pub fn format_markup(
     let mut disabled = false;
     for child in node.children() {
         if (child.kind() == SyntaxKind::LineComment || child.kind() == SyntaxKind::BlockComment)
-            && child.text().contains("prettypst")
+            && child.leaf_text().contains("prettypst")
         {
-            if child.text().contains("disable") {
+            if child.leaf_text().contains("disable") {
                 disabled = true;
-            } else if child.text().contains("enable") {
+            } else if child.leaf_text().contains("enable") {
                 disabled = false;
             }
         }
@@ -42,7 +42,7 @@ pub fn format_content_block(
             && matches!(node.kind(), SyntaxKind::Space | SyntaxKind::Parbreak)
         {
             start_space = true;
-            if node.text().contains('\n') {
+            if node.leaf_text().contains('\n') {
                 linebreak = true;
             }
         }
@@ -50,7 +50,7 @@ pub fn format_content_block(
             && matches!(node.kind(), SyntaxKind::Space | SyntaxKind::Parbreak)
         {
             end_space = true;
-            if node.text().contains('\n') {
+            if node.leaf_text().contains('\n') {
                 linebreak = true;
             }
         }
@@ -117,7 +117,7 @@ pub fn format_text(
 ) {
     match state.mode {
         Mode::MarkupBreakable => {
-            let mut iter = node.text().split(' ');
+            let mut iter = node.leaf_text().split(' ');
             if let Whitespace::None = output.get_whitespace().0
                 && let Some(word) = iter.next()
             {

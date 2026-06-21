@@ -19,12 +19,7 @@ pub fn format(
     settings: &Settings,
     output: &mut Output<impl OutputTarget>,
 ) {
-    if node.erroneous()
-        && node
-            .children()
-            .flat_map(|child| child.children())
-            .any(|child| child.kind() == SyntaxKind::Error)
-    {
+    if node.diagnosis().errors {
         return skip_formatting(node, state, settings, output);
     }
 
@@ -61,8 +56,11 @@ pub fn format(
         SyntaxKind::Math => format_default(node, state, settings, output),
         SyntaxKind::MathText => format_default(node, state, settings, output),
         SyntaxKind::MathIdent => format_default(node, state, settings, output),
+        SyntaxKind::MathFieldAccess => format_default(node, state, settings, output),
         SyntaxKind::MathShorthand => format_default(node, state, settings, output),
         SyntaxKind::MathAlignPoint => format_default(node, state, settings, output),
+        SyntaxKind::MathCall => format_func_call(node, state, settings, output),
+        SyntaxKind::MathArgs => format_items(node, state, settings, output),
         SyntaxKind::MathDelimited => format_default(node, state, settings, output),
         SyntaxKind::MathAttach => format_math_attach(node, state, settings, output),
         SyntaxKind::MathPrimes => format_default(node, state, settings, output),
@@ -86,7 +84,6 @@ pub fn format(
         SyntaxKind::Minus => format_padded(node, state, settings, output),
         SyntaxKind::Slash => format_padded(node, state, settings, output),
         SyntaxKind::Hat => format_default(node, state, settings, output),
-        SyntaxKind::Prime => format_default(node, state, settings, output),
         SyntaxKind::Dot => format_no_padding(node, state, settings, output),
         SyntaxKind::Eq => format_padded(node, state, settings, output),
         SyntaxKind::EqEq => format_padded(node, state, settings, output),
@@ -102,6 +99,7 @@ pub fn format(
         SyntaxKind::Dots => format_right_bound(node, state, settings, output),
         SyntaxKind::Arrow => format_padded(node, state, settings, output),
         SyntaxKind::Root => format_right_bound(node, state, settings, output),
+        SyntaxKind::Bang => format_default(node, state, settings, output),
 
         SyntaxKind::Not => output.raw(node, &state, settings),
         SyntaxKind::And => output.raw(node, &state, settings),
@@ -296,7 +294,7 @@ fn format_space(
         Mode::MultilineItems => true,
     };
     if preserve {
-        match node.text().chars().filter(|&c| c == '\n').count() {
+        match node.leaf_text().chars().filter(|&c| c == '\n').count() {
             0 => output.set_whitespace(Whitespace::Space, Priority::Low),
             1 => output.set_whitespace(Whitespace::LineBreak, Priority::Normal),
             _ => output.set_whitespace(Whitespace::LineBreaks(2), Priority::Normal),

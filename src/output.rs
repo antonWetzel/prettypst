@@ -160,11 +160,11 @@ impl<'a, Target: OutputTarget> Output<'a, Target> {
     }
 
     pub fn raw(&mut self, node: &SyntaxNode, state: &State, settings: &Settings) {
-        if node.text().is_empty() {
+        if node.leaf_text().is_empty() {
             return;
         }
         self.emit_whitespace(state, settings);
-        self.emit(node.text(), settings);
+        self.emit(node.leaf_text(), settings);
     }
 
     pub fn raw_text(&mut self, text: &str, state: &State, settings: &Settings) {

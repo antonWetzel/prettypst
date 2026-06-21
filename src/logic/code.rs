@@ -13,7 +13,7 @@ pub fn format_code_block(
 ) {
     let single = node
         .children()
-        .all(|value| value.kind() != SyntaxKind::Space || value.text().contains('\n').not());
+        .all(|value| value.kind() != SyntaxKind::Space || value.leaf_text().contains('\n').not());
     state.mode = Mode::Code;
     for child in node.children() {
         match child.kind() {
@@ -56,7 +56,7 @@ pub fn format_func_call(
     for child in node.children() {
         match child.kind() {
             SyntaxKind::Ident => {
-                kind = match settings.columns_methods.get(child.text().as_str()) {
+                kind = match settings.columns_methods.get(child.leaf_text().as_str()) {
                     None => Kind::Normal,
                     Some(column_argument) => Kind::Columns(column_argument),
                 };
@@ -216,7 +216,7 @@ impl CellSize {
             .children()
             .rev()
             .find(|child| child.kind() == SyntaxKind::Ident)
-            .map(|child| child.text())
+            .map(|child| child.leaf_text())
         else {
             return Self::Single(length);
         };
@@ -237,11 +237,11 @@ impl CellSize {
                     let name = child
                         .children()
                         .find(|node| node.kind() == SyntaxKind::Ident)
-                        .map(|child| child.text().as_str());
+                        .map(|child| child.leaf_text().as_str());
                     let value = child
                         .children()
                         .find(|node| node.kind() == SyntaxKind::Int)
-                        .map(|child| child.text().parse::<usize>());
+                        .map(|child| child.leaf_text().parse::<usize>());
                     match (name, value) {
                         (Some("colspan"), Some(Ok(size))) => x = size,
                         (Some("rowspan"), Some(Ok(size))) => y = size,
@@ -496,7 +496,7 @@ fn get_column_count(node: &SyntaxNode, column_argument: &str) -> usize {
         let state = child.children().fold(State::Start, |state, sub_child| {
             match (&state, sub_child.kind()) {
                 (State::Start, SyntaxKind::Ident) => {
-                    if sub_child.text() == column_argument {
+                    if sub_child.leaf_text() == column_argument {
                         State::IsColumns
                     } else {
                         State::Start
@@ -515,7 +515,7 @@ fn get_column_count(node: &SyntaxNode, column_argument: &str) -> usize {
                     State::Columns(count)
                 }
                 (State::IsColumns, SyntaxKind::Int) => {
-                    State::Columns(sub_child.text().parse().unwrap_or(1))
+                    State::Columns(sub_child.leaf_text().parse().unwrap_or(1))
                 }
                 _ => state,
             }

@@ -56,7 +56,6 @@
 
 #table(
   columns: (1fr, auto),
-  stroke: none,
   table.hline(stroke: 0.08em),
   [*Category*], [*Price*],
   table.hline(stroke: 0.05em),
