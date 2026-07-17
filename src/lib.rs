@@ -33,9 +33,9 @@ pub struct Command {
     #[arg(short, long, default_value_t = Styles::Default)]
     pub style: Styles,
 
-    /// Search for 'prettypst.toml' for additional formatting settings
-    #[arg(long, default_value_t = false)]
-    pub use_configuration: bool,
+    /// Path to a configuration file with additional formatting settings
+    #[arg(short, long, env = "PRETTYPST_CONFIG", default_value = None)]
+    pub config: Option<PathBuf>,
 
     /// Generate file with formatting settings based on the style
     #[arg(long, default_value_t = false)]
@@ -48,20 +48,10 @@ pub struct Command {
     /// Use standard output as target
     #[arg(long, default_value_t = false)]
     pub use_std_out: bool,
-
-    /// File location to search for configuration, defaults to input path if available
-    #[arg(long, default_value = None)]
-    pub file_location: Option<PathBuf>,
 }
 
 #[derive(thiserror::Error, Debug)]
 pub enum FormatError {
-    #[error("Failed to get project folder")]
-    FailedToGetProjectFolder,
-    #[error("Failed to get working directory")]
-    FailedToGetWorkingDirectory(std::io::Error),
-    #[error("No configuration file")]
-    NoConfigurationFile,
     #[error("Failed to read configuration file")]
     FailedToReadConfigurationFile(std::io::Error),
     #[error("malformed configuration file: {0}")]
@@ -117,38 +107,18 @@ pub fn format_str(text: &str, settings: &settings::Settings, target: &mut impl O
 pub fn format(command: &Command) -> Result<(), FormatError> {
     let mut settings = command.style.settings();
 
-    if command.use_configuration {
-        let path = match (&command.file_location, &command.path) {
-            (Some(path), _) => {
-                if path.extension().is_some() {
-                    path.parent()
-                        .ok_or(FormatError::FailedToGetProjectFolder)?
-                        .to_owned()
-                } else {
-                    path.to_owned()
-                }
-            }
-            (_, Some(path)) => path.to_owned(),
-            _ => std::env::current_dir()
-                .map_err(FormatError::FailedToGetWorkingDirectory)?
-                .to_owned(),
-        };
-        let mut path = path.as_path();
-        let file = loop {
-            let mut file = PathBuf::from(path);
-            file.push(CONFIG_NAME);
-            if file.is_file() {
-                break file;
-            }
-            path = path.parent().ok_or(FormatError::NoConfigurationFile)?;
-        };
-        settings.overwrite(&file)?;
-    }
-
     if command.save_configuration {
-        std::fs::write(CONFIG_NAME, toml::to_string_pretty(&settings)?)
+        let path = command
+            .config
+            .clone()
+            .unwrap_or_else(|| PathBuf::from(CONFIG_NAME));
+        std::fs::write(&path, toml::to_string_pretty(&settings)?)
             .map_err(FormatError::FailedToSaveConfigurationFile)?;
         return Ok(());
+    }
+
+    if let Some(config) = &command.config {
+        settings.overwrite(config)?;
     }
 
     let (input_data, input_name) = match (&command.path, command.use_std_in) {

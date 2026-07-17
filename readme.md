@@ -258,8 +258,7 @@ But paragraphs stay seperated!
 	prettypst ... -o <output-file>              | Change output file
 	prettypst ... --use-std-out                 | Use terminal as output
 	prettypst --style=[default | otbs] ...      | Change the used style
-	prettypst --use-configuration ...           | Load a configuration from "prettypst.toml"
-	prettypst --file-location=<path> ...        | Change file location to search for configuration (use with --use-std-in)
+	prettypst --config=<path> ...               | Load a configuration from the given file (or set PRETTYPST_CONFIG)
 
 ### VSCodium or VSCode
 
@@ -268,7 +267,7 @@ But paragraphs stay seperated!
 	- ```json
 		"customLocalFormatters.formatters": [
 			{
-				"command": "prettypst --use-std-in --use-std-out --file-location=${file}",
+				"command": "prettypst --use-std-in --use-std-out --config=<path>",
 				"languages": [
 					"typst",
 				],
@@ -277,8 +276,7 @@ But paragraphs stay seperated!
    		```
 - change command to use wanted style or configuration
 	- `--style=otbs`
-	- `--use-configuration`
-		- `prettypst.toml` must be in the same folder as the formatted file or a parent folder
+	- `--config=<path>` (or set the `PRETTYPST_CONFIG` environment variable)
 
 ### Helix
 
@@ -291,8 +289,7 @@ But paragraphs stay seperated!
   ```
 - change command to use wanted style or configuration
 	- `--style=otbs`
-	- `--use-configuration`
-		- `prettypst.toml` must be in the current working directory or a parent folder
+	- `--config=<path>` (or set the `PRETTYPST_CONFIG` environment variable)
 
 ## Settings
 
