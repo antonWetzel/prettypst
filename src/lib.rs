@@ -21,29 +21,34 @@ const CONFIG_NAME: &str = "prettypst.toml";
 
 #[derive(Debug, Clone, Parser)]
 pub struct Command {
-    /// Input path for source file, used as output path if nothing else is specified
+    /// Input path for source file, used as output path if nothing else is specified.
     #[arg(default_value = None)]
     pub path: Option<PathBuf>,
 
-    /// Output path
+    /// Output path.
     #[arg(short, long, default_value = None)]
     pub output: Option<PathBuf>,
 
-    /// Base style for the formatting settings
+    /// Base style for the formatting settings.
     #[arg(short, long, default_value_t = Styles::Default)]
     pub style: Styles,
 
-    /// Generate file with formatting settings based on the style
+    /// Generate file with formatting settings based on the style.
     #[arg(long, default_value_t = false)]
     pub save_configuration: bool,
 
-    /// Use standard input as source
+    /// Use standard input as source.
     #[arg(long, default_value_t = false)]
     pub use_std_in: bool,
 
-    /// Use standard output as target
+    /// Use standard output as target.
     #[arg(long, default_value_t = false)]
     pub use_std_out: bool,
+
+    /// File location to search for configuration if std in is used.
+    /// Defaults to input path if available.
+    #[arg(long, default_value = None)]
+    pub file_location: Option<PathBuf>,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -107,12 +112,16 @@ pub fn format_str(text: &str, settings: &settings::Settings, target: &mut impl O
 pub fn format(command: &Command) -> Result<(), FormatError> {
     let mut settings = command.style.settings();
 
-    let settings_dir = match command.path.as_deref().and_then(|path| path.parent()) {
-        Some(path) => path
-            .canonicalize()
-            .map_err(FormatError::FailedToCanonicalizePath)?,
-        None => std::env::current_dir().map_err(FormatError::FailedToGetWorkingDirectory)?,
-    };
+    let settings_dir = command
+        .path
+        .as_deref()
+        .or_else(|| command.file_location.as_deref())
+        .and_then(|p| p.parent())
+        .map(|p| p.canonicalize())
+        .transpose()
+        .map_err(FormatError::FailedToCanonicalizePath)?
+        .map_or_else(std::env::current_dir, Ok)
+        .map_err(FormatError::FailedToGetWorkingDirectory)?;
 
     // from root to settings directory find all config files
     let mut settings_path = PathBuf::new();
