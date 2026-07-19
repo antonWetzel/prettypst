@@ -1,7 +1,7 @@
 / Test: Some long, irrelevant body. Spanning multiple lines.
 
 
-= Seperator
+= Separator
 
 / A: A
 / B: B
@@ -9,7 +9,7 @@
 / D: D
 
 
-= Seperator
+= Separator
 
 / A: A
 / A: A
@@ -17,7 +17,7 @@
 / A: A
 
 
-= Seperator
+= Separator
 
 / A: #test(
 		[],

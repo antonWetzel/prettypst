@@ -1,6 +1,6 @@
 use std::{io::Cursor, path::Path};
 
-use prettypst::{format_node, Styles};
+use prettypst::{Styles, format_node};
 
 macro_rules! test_styles {
     ($input_data:expr) => {

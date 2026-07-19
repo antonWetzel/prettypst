@@ -4,6 +4,7 @@
 
 - **BREAKING** | Remove `use-configuration` and `file-location`
     - Always search from the root to the file location for `prettypst.toml` files and use options from the closest configuration
+- **Fix** | More spelling corrections
 
 ## 2026.04.11 | Update 3.2
 
@@ -19,7 +20,7 @@
 
 ## 2024.12.11
 
-- **BREAKING** | Correct spelling mistake (seperate $\to$ separate)
+- **BREAKING** | Correct spelling mistake (use separate)
 
 ## 2024.10.20
 

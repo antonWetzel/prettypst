@@ -113,9 +113,9 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
     let mut settings = command.style.settings();
 
     let settings_dir = command
-        .path
+        .file_location
         .as_deref()
-        .or_else(|| command.file_location.as_deref())
+        .or_else(|| command.path.as_deref())
         .and_then(|p| p.parent())
         .map(|p| p.canonicalize())
         .transpose()

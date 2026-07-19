@@ -1,15 +1,13 @@
 # Prettypst
 
-
 ## Formatter for Typst!
-
 
 <table>
 <tr>
 <td> Before </td> <td> Default Style </td> <td> OTBS Style </td>
 </tr>
 <tr>
-<td> 
+<td>
 
 ```typst
 = Heading
@@ -30,27 +28,27 @@
   & \
 $
 
-Some math $c$, $d $, $ e$ and $ f_1^       pi * - 3$.
+Some math $c$, $d $, $ e$ and $ f_1^ pi \* - 3$.
 == Trailing comma and long blocks
 
 // no trailing comma and content with only spaces
 #figure(
-    caption: [compact],
-    [ Some Content ]
+caption: [compact],
+[ Some Content ]
 )
 
 // no trailing comma and content with newline
 #figure(
-    caption: [nested],
-    [
-            Some Content ]
+caption: [nested],
+[
+Some Content ]
 )
 
 // trailing comma and content with newline
 #figure(
-    caption: [nested],
-    [
-            Some Content ],
+caption: [nested],
+[
+Some Content ],
 )
 
 == Linebreaks
@@ -61,7 +59,7 @@ Maybe wanted or unwanted.
 #image("image_a.png")
 #image("image_b.png")
 
-But paragraphs stay seperated!
+But paragraphs stay separated!
 
 == Label<section_label>
 
@@ -70,18 +68,19 @@ But paragraphs stay seperated!
 #let f = (diff, content ) => {
 
 box(width: 30%,align(center,{
-    content
-    v(diff, weak:true)
-    counter.display(numbering) + [ ] + caption
+content
+v(diff, weak:true)
+counter.display(numbering) + [ ] + caption
 }))
 }
 
 == Code
 
 #{
-    let    x= 1 * - 3 ;
-    let y=    1==2 and 3==3 
+let x= 1 \* - 3 ;
+let y= 1==2 and 3==3
 }
+
 ```
 
 </td>
@@ -132,7 +131,7 @@ Maybe wanted or unwanted.
 #image("image_a.png")
 #image("image_b.png")
 
-But paragraphs stay seperated!
+But paragraphs stay separated!
 
 == Label <section_label>
 
@@ -156,7 +155,7 @@ But paragraphs stay seperated!
 ```
 
 </td>
-<td> 
+<td>
 
 ```typst
 = Heading
@@ -209,7 +208,7 @@ Some math $c$, $d$, $e$ and $f_1^pi * - 3$.
 
 Everything is written in content mode is on the same line after formatting. Maybe wanted or unwanted. #image("image_a.png") #image("image_b.png")
 
-But paragraphs stay seperated!
+But paragraphs stay separated!
 
 
 == Label <section_label>
@@ -239,10 +238,9 @@ But paragraphs stay seperated!
 </tr>
 </table>
 
-
 ## Install
 
-	cargo install --git=https://github.com/antonWetzel/prettypst.git --locked
+    cargo install --git=https://github.com/antonWetzel/prettypst.git --locked
 
 ## Usage / Features
 
@@ -252,33 +250,31 @@ But paragraphs stay seperated!
 
 ### Terminal
 
-	prettypst [--help]                          | Print help
-	prettypst <file>                            | Format file inplace
-	prettypst --use-std-in ...                  | Use terminal as input
-	prettypst ... -o <output-file>              | Change output file
-	prettypst ... --use-std-out                 | Use terminal as output
-	prettypst --style=[default | otbs] ...      | Change the used style
-	prettypst --use-configuration ...           | Load a configuration from "prettypst.toml"
-	prettypst --file-location=<path> ...        | Change file location to search for configuration (use with --use-std-in)
+    prettypst [--help]                          | Print help
+    prettypst <file>                            | Format file inplace
+    prettypst --use-std-in ...                  | Use terminal as input
+    prettypst ... -o <output-file>              | Change output file
+    prettypst ... --use-std-out                 | Use terminal as output
+    prettypst --style=[default | otbs] ...      | Change the used style
+    prettypst --file-location=<path> ...        | Change file location to search for configuration (use with --use-std-in)
 
 ### VSCodium or VSCode
 
 - install custom-local-formatters
 - use prettypst for typst
-	- ```json
-		"customLocalFormatters.formatters": [
-			{
-				"command": "prettypst --use-std-in --use-std-out --file-location=${file}",
-				"languages": [
-					"typst",
-				],
-			}
-		],
-   		```
+    - ````json
+      "customLocalFormatters.formatters": [
+      	{
+      		"command": "prettypst --use-std-in --use-std-out --file-location=${file}",
+      		"languages": [
+      			"typst",
+      		],
+      	}
+      ],
+      	```
+      ````
 - change command to use wanted style or configuration
-	- `--style=otbs`
-	- `--use-configuration`
-		- `prettypst.toml` must be in the same folder as the formatted file or a parent folder
+    - `--style=otbs`
 
 ### Helix
 
@@ -290,13 +286,13 @@ But paragraphs stay seperated!
   formatter = { command = "prettypst", args = ["--use-std-in", "--use-std-out"] }
   ```
 - change command to use wanted style or configuration
-	- `--style=otbs`
-	- `--use-configuration`
-		- `prettypst.toml` must be in the current working directory or a parent folder
+    - `--style=otbs`
 
 ## Settings
 
 - create configuration with `prettypst [--style=otbs] --save-configuration`
+- from root to directory of the current file the configuration is loaded from `prettypst.toml` files
+    - closer files have precedence
 
 ```gdscript
 indentation = 0 | 1 | ... # use 0 for tabs
@@ -308,7 +304,7 @@ content = false | true # preserve single newlines in markup
 math = false | true # preserve single newline in equations
 
 [automatic-newline]
-max-width = 0 # insert a linebreak if the current line would exceed the max width, use zero to disable 
+max-width = 0 # insert a linebreak if the current line would exceed the max width, use zero to disable
 in-strong = false # allow automatic linebreak in strong (*...*)
 in-emphasis = false # allow automatic linebreak in emphasis (_..._)
 

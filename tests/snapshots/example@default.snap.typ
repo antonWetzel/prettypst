@@ -42,7 +42,7 @@ Maybe wanted or unwanted.
 #image("image_a.png")
 #image("image_b.png")
 
-But paragraphs stay seperated!
+But paragraphs stay separated!
 
 == Label <section_label>
 
