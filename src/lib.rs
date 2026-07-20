@@ -22,6 +22,8 @@ const CONFIG_NAME: &str = "prettypst.toml";
 #[derive(Debug, Clone, Parser)]
 pub struct Command {
     /// Input path for source file, used as output path if nothing else is specified.
+    ///
+    /// If standard-input is used, this is only the file location to search for the configuration.
     #[arg(default_value = None)]
     pub path: Option<PathBuf>,
 
@@ -45,10 +47,16 @@ pub struct Command {
     #[arg(long, default_value_t = false)]
     pub use_std_out: bool,
 
-    /// File location to search for configuration if std in is used.
-    /// Defaults to input path if available.
+    /// Directory to search for configuration.
+    ///
+    /// In the directory and all parent directories the `prettypst.toml` files
+    /// are combined to create the configuration.
+    ///
+    /// If unspecified, the following is used instead:
+    /// 1. Containing directory of the input path if available
+    /// 1. Current working directory
     #[arg(long, default_value = None)]
-    pub file_location: Option<PathBuf>,
+    pub config_directory: Option<PathBuf>,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -70,8 +78,6 @@ pub enum FormatError {
     FailedToReadStdIn(std::io::Error),
     #[error("no input file or stdin specified")]
     NoInputFileOrStdInSpecified,
-    #[error("input file and stdin specified")]
-    InputFileAndStdInSpecified,
     #[error("failed to read input file")]
     FailedToReadInputFile(std::io::Error),
 
@@ -112,16 +118,17 @@ pub fn format_str(text: &str, settings: &settings::Settings, target: &mut impl O
 pub fn format(command: &Command) -> Result<(), FormatError> {
     let mut settings = command.style.settings();
 
-    let settings_dir = command
-        .file_location
-        .as_deref()
-        .or_else(|| command.path.as_deref())
-        .and_then(|p| p.parent())
-        .map(|p| p.canonicalize())
-        .transpose()
-        .map_err(FormatError::FailedToCanonicalizePath)?
-        .map_or_else(std::env::current_dir, Ok)
-        .map_err(FormatError::FailedToGetWorkingDirectory)?;
+    let settings_dir = if let Some(dir) = &command.config_directory {
+        dir.canonicalize()
+            .map_err(FormatError::FailedToCanonicalizePath)?
+    } else if let Some(path) = &command.path
+        && let Some(dir) = path.parent()
+    {
+        dir.canonicalize()
+            .map_err(FormatError::FailedToCanonicalizePath)?
+    } else {
+        std::env::current_dir().map_err(FormatError::FailedToGetWorkingDirectory)?
+    };
 
     // from root to settings directory find all config files
     let mut settings_path = PathBuf::new();
@@ -140,21 +147,16 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
         return Ok(());
     }
 
-    let (input_data, input_name) = match (&command.path, command.use_std_in) {
-        (Some(_), true) => return Err(FormatError::InputFileAndStdInSpecified),
-        (Some(path), false) => {
-            let input_data =
-                std::fs::read_to_string(path).map_err(FormatError::FailedToReadInputFile)?;
-            (input_data, path.display().to_string())
-        }
-        (None, true) => {
-            let mut data = String::new();
-            std::io::stdin()
-                .read_to_string(&mut data)
-                .map_err(FormatError::FailedToReadStdIn)?;
-            (data, "stdin".into())
-        }
-        (None, false) => return Err(FormatError::NoInputFileOrStdInSpecified),
+    let input_data = if command.use_std_in {
+        let mut data = String::new();
+        std::io::stdin()
+            .read_to_string(&mut data)
+            .map_err(FormatError::FailedToReadStdIn)?;
+        data
+    } else if let Some(path) = &command.path {
+        std::fs::read_to_string(path).map_err(FormatError::FailedToReadInputFile)?
+    } else {
+        Err(FormatError::NoInputFileOrStdInSpecified)?
     };
 
     let root = typst_syntax::parse(&input_data);
@@ -173,6 +175,11 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
             drop(target);
         }
         (None, false) => {
+            let input_name = command.path.as_deref().map_or_else(
+                || String::from("unknown.typ"),
+                |path| path.display().to_string(),
+            );
+
             let temp_path = format!("{}.tmp", input_name);
             let file =
                 File::create(&temp_path).map_err(FormatError::FailedToCreateTemporaryFile)?;

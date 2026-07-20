@@ -256,7 +256,7 @@ But paragraphs stay separated!
     prettypst ... -o <output-file>              | Change output file
     prettypst ... --use-std-out                 | Use terminal as output
     prettypst --style=[default | otbs] ...      | Change the used style
-    prettypst --file-location=<path> ...        | Change file location to search for configuration (use with --use-std-in)
+    prettypst --config-directory=<path> ...     | Change the directory to search for configuration files
 
 ### VSCodium or VSCode
 
@@ -265,7 +265,7 @@ But paragraphs stay separated!
     - ````json
       "customLocalFormatters.formatters": [
       	{
-      		"command": "prettypst --use-std-in --use-std-out --file-location=${file}",
+      		"command": "prettypst --use-std-in --use-std-out ${file}",
       		"languages": [
       			"typst",
       		],
@@ -292,7 +292,7 @@ But paragraphs stay separated!
 
 - create configuration with `prettypst [--style=otbs] --save-configuration`
 - from root to directory of the current file the configuration is loaded from `prettypst.toml` files
-    - closer files have precedence
+    - closer configuration files have precedence
 
 ```gdscript
 indentation = 0 | 1 | ... # use 0 for tabs

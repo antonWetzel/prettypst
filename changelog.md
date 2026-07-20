@@ -2,8 +2,12 @@
 
 ## 2026.07.19 | Update 4.0
 
-- **BREAKING** | Remove `use-configuration` and `file-location`
-    - Always search from the root to the file location for `prettypst.toml` files and use options from the closest configuration
+- **BREAKING**
+    - Remove `use-configuration` and `file-location`
+    - Use `path` instead of `file-location` if standard input is used
+    - Add `config-directory` to load configuration from another directory
+        - Fallback the the directory containing `path` if not specified
+    - Always search from the root to the configuration directory for `prettypst.toml` files and use options from the closest configuration
 - **Fix** | More spelling corrections
 
 ## 2026.04.11 | Update 3.2
