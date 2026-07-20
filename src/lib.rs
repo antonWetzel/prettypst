@@ -142,8 +142,11 @@ pub fn format(command: &Command) -> Result<(), FormatError> {
     }
 
     if command.save_configuration {
-        std::fs::write(CONFIG_NAME, toml::to_string_pretty(&settings)?)
-            .map_err(FormatError::FailedToSaveConfigurationFile)?;
+        std::fs::write(
+            settings_dir.join(CONFIG_NAME),
+            toml::to_string_pretty(&settings)?,
+        )
+        .map_err(FormatError::FailedToSaveConfigurationFile)?;
         return Ok(());
     }
 
