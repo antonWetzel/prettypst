@@ -10,7 +10,7 @@ pub fn format_equation(
         .children()
         .filter(|child| child.kind() == SyntaxKind::Space)
         .count();
-    if spaces < 2 || !equation_has_aligment(node) {
+    if spaces < 2 || !equation_has_alignment(node) {
         format_inline_equation(node, state, settings, output, spaces == 2);
     } else {
         format_multi_line_equation(node, state, settings, output);
@@ -182,7 +182,7 @@ fn format_inline_equation(
     }
 }
 
-fn equation_has_aligment(node: &SyntaxNode) -> bool {
+fn equation_has_alignment(node: &SyntaxNode) -> bool {
     for child in node.children() {
         if child.kind() != SyntaxKind::Math {
             continue;

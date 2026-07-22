@@ -47,7 +47,7 @@ Maybe wanted or unwanted.
 #image("image_a.png")
 #image("image_b.png")
 
-But paragraphs stay seperated!
+But paragraphs stay separated!
 
 == Label<section_label>
 
@@ -66,5 +66,5 @@ box(width: 30%,align(center,{
 
 #{
     let    x= 1 * - 3 ;
-    let y=    1==2 and 3==3 
+    let y=    1==2 and 3==3
 }

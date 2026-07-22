@@ -48,7 +48,7 @@ Some math $c$, $d$, $e$ and $f_1^pi * - 3$.
 
 Everything is written in content mode is on the same line after formatting. Maybe wanted or unwanted. #image("image_a.png") #image("image_b.png")
 
-But paragraphs stay seperated!
+But paragraphs stay separated!
 
 
 == Label <section_label>

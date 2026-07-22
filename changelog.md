@@ -1,12 +1,22 @@
 # Changelog
 
+## 2026.07.19 | Update 4.0
+
+- **BREAKING**
+    - Remove `use-configuration` and `file-location`
+    - Use `path` instead of `file-location` if standard input is used
+    - Add `config-directory` to load configuration from another directory
+        - Fallback the the directory containing `path` if not specified
+    - Always search from the root to the configuration directory for `prettypst.toml` files and use options from the closest configuration
+- **Fix** | More spelling corrections
+
 ## 2026.04.11 | Update 3.2
 
-- **ADD** | Use full line for `hline` in tables and grids 
+- **ADD** | Use full line for `hline` in tables and grids
 
 ## 2025.04.22 | Update 3.1
 
-- **ADD** | Add automatic newlines in long content based on max width 
+- **ADD** | Add automatic newlines in long content based on max width
 
 ## 2025.03.03 | Update 3.0
 
@@ -14,7 +24,7 @@
 
 ## 2024.12.11
 
-- **BREAKING** | Correct spelling mistake (seperate $\to$ separate)
+- **BREAKING** | Correct spelling mistake (use separate)
 
 ## 2024.10.20
 
@@ -27,7 +37,7 @@
 
 ## 2024.07.29
 
-- **ADD** | Only format label in Markup 
+- **ADD** | Only format label in Markup
 - Update tests
 
 ## 2024.06.24
@@ -44,22 +54,22 @@
 ## 2023.12.06 | Update 1.1
 
 - **BREAKING** | change settings to `kabab-case`
-- **ADD** |  setting for methods, which arguments are formatted as columns
-	- add `[columns-commands]` section
-	- use `<method-name> = "<argument-name>`
-	- ```toml
-		[columns-commands]
-		grid = "columns"
-		gridx = "columns"
-		table = "columns"
-		tablex = "columns"
-		```
-	- `<argument-name>`, is the name of the named argument, where the column count is specified
+- **ADD** | setting for methods, which arguments are formatted as columns
+    - add `[columns-commands]` section
+    - use `<method-name> = "<argument-name>`
+    - ```toml
+      [columns-commands]
+      grid = "columns"
+      gridx = "columns"
+      table = "columns"
+      tablex = "columns"
+      ```
+    - `<argument-name>`, is the name of the named argument, where the column count is specified
 - **ADD** | setting for padding around `,` in arguments
-	- ```toml
-		[comma]
-		space-before = false
-		space-after = true
-		```
+    - ```toml
+      [comma]
+      space-before = false
+      space-after = true
+      ```
 
 ## 2023.11.21 | Release
