@@ -1,6 +1,18 @@
 ---
-source: src/lib.rs
+source: tests/snapshots.rs
 expression: output
-extension: typ
-snapshot_kind: binary
 ---
+$0$
+
+$0$
+
+$0$
+
+$ 0 $
+
+$ 100 & 1   \
+      & 100 \ $
+
+$
+  1000 &  &  &  \
+       &  &  &  \ $

@@ -1,6 +1,16 @@
 ---
-source: src/lib.rs
+source: tests/snapshots.rs
 expression: output
-extension: typ
-snapshot_kind: binary
 ---
+#{
+	h(1pt)
+	h(1pt)
+	h(
+		1pt,
+	)
+	h(
+		1pt,
+	)
+	_ = (1)
+	_ = (1,)
+}

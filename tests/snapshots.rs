@@ -3,7 +3,7 @@ use std::{io::Cursor, path::Path};
 use prettypst::{Styles, format_node};
 
 macro_rules! test_styles {
-    ($input_data:expr) => {
+    ($name:ident, $input_data:expr) => {
         let input_data = include_str!(concat!("source/", $input_data, ".typ"));
         let root = typst_syntax::parse(input_data);
 
@@ -14,11 +14,11 @@ macro_rules! test_styles {
         for (style_name, style) in [("default", Styles::Default), ("otbs", Styles::Otbs)] {
             let mut output = Cursor::new(Vec::new());
             format_node(&root, &style.settings(), &mut output);
-            let output = output.into_inner();
+            let output = String::from_utf8(output.into_inner()).expect("formatter output must be UTF-8");
 
             settings.set_snapshot_suffix(style_name);
             settings.bind(|| {
-                insta::assert_binary_snapshot!(".typ", output);
+                insta::assert_snapshot!(stringify!($name), output);
             })
         }
     };
@@ -31,7 +31,7 @@ macro_rules! create_tests {
         $(
             #[test]
             fn $name() {
-                test_styles!($file);
+                test_styles!($name, $file);
             }
         )*
     };
