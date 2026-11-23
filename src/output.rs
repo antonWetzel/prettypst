@@ -125,11 +125,11 @@ impl<'a, Target: OutputTarget> Output<'a, Target> {
             match symbol {
                 '\t' => {
                     let tab_size = settings.indentation.max(1);
-                    self.column += 1 + tab_size.overflowing_sub(self.column).0 % tab_size
+                    self.column += tab_size - self.column % tab_size;
                 }
                 '\n' => {
                     self.line += 1;
-                    self.column = 1;
+                    self.column = 0;
                 }
                 _ => self.column += 1,
             }
