@@ -1,0 +1,7 @@
+---
+source: tests/snapshots.rs
+assertion_line: 40
+expression: output
+extension: typ
+snapshot_kind: binary
+---

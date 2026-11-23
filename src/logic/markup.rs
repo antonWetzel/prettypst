@@ -127,8 +127,9 @@ pub fn format_text(
             for word in iter {
                 let fixpoint = output.create_fixpoint();
                 output.raw_text(word, &state, settings);
+                let too_wide = output.position().1 > settings.automatic_newline.max_width;
                 output.set_fixpoint(fixpoint);
-                if output.position().1 > 80 {
+                if too_wide {
                     output.set_whitespace(Whitespace::LineBreak, Priority::Normal);
                 } else {
                     output.set_whitespace(Whitespace::Space, Priority::Normal);
